@@ -1,1 +1,6 @@
-<Solution />
+<Solution>
+  <Folder Name="/Shared/">
+    <Project Path="EShop.Shared.Abstractions/EShop.Shared.Abstractions.csproj" Id="240d4143-a094-4924-b0b2-af068cfa8d5a" />
+  </Folder>
+  <Project Path="01.Domain/01.Domain.csproj" />
+</Solution>
