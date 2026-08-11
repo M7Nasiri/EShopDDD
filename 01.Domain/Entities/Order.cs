@@ -14,6 +14,8 @@ namespace _01.Domain.Entities
             get
             {
                 var total = Items.Sum(x => x.TotalPrice.Amount);
+                var coupon = total * (decimal)((Coupon.Value) / 100);
+                total = total - coupon;
                 return new Money(total);
             }
         }
