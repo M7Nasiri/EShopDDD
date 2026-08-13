@@ -5,9 +5,10 @@ using System.Text;
 
 namespace _01.Domain.Exceptions
 {
-    public class EShopCountException:EShopException
+    public class EShopNullException : EShopException
     {
-        public EShopCountException() : base("Count can not be less than zero")
+        public object? Par { get; set; }
+        public EShopNullException(string message = $"{nameof(Par)} is null.") : base(message)
         {
             
         }

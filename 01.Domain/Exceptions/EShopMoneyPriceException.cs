@@ -5,9 +5,9 @@ using System.Text;
 
 namespace _01.Domain.Exceptions
 {
-    public class EShopCountException:EShopException
+    public class EShopMoneyPriceException : EShopException
     {
-        public EShopCountException() : base("Count can not be less than zero")
+        public EShopMoneyPriceException(string message = "Price can not be null.") : base(message)
         {
             
         }

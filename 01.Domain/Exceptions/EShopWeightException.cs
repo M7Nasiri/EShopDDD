@@ -5,9 +5,9 @@ using System.Text;
 
 namespace _01.Domain.Exceptions
 {
-    public class EShopCountException:EShopException
+    public class EShopWeightException : EShopException
     {
-        public EShopCountException() : base("Count can not be less than zero")
+        public EShopWeightException() : base("Weight cannot be negative.")
         {
             
         }
