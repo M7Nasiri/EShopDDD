@@ -39,7 +39,6 @@ namespace _01.Domain.Entities.Aggregates.CouponAgg
             DomainDate endDate,
             int? usageLimit = null)
         {
-            ArgumentNullException.ThrowIfNull(createdByUserId);
             ArgumentNullException.ThrowIfNull(startDate);
             ArgumentNullException.ThrowIfNull(endDate);
 
@@ -57,7 +56,7 @@ namespace _01.Domain.Entities.Aggregates.CouponAgg
                 throw new EShopDomainException(
                     "Usage limit must be greater than zero.");
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             Code = code.Trim().ToUpperInvariant();
             Percent = percent;
             CreatedByUserId = createdByUserId;

@@ -32,7 +32,7 @@ namespace _02.Application.CustomerAgg.Commands.AddCustomerAddress
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
 
             var customer = await _customerRepository.GetWithAddressesTrackingAsync(
                 customerId, cancellationToken);

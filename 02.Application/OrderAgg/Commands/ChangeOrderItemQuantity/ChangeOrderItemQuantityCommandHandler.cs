@@ -38,8 +38,8 @@ namespace _02.Application.OrderAgg.Commands.ChangeOrderItemQuantity
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
-            var productId = new Guid(request.ProductId);
+            var customerId = _currentUser.UserId.Value;
+            var productId = request.ProductId;
 
             var order = await _orderRepository.GetDraftOrderByCustomerIdAsync(customerId, cancellationToken);
 

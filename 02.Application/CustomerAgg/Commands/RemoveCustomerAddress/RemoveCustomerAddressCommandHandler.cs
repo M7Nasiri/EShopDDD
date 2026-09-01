@@ -30,7 +30,7 @@ namespace _02.Application.CustomerAgg.Commands.RemoveCustomerAddress
                     "User must be authenticated.");
             }
 
-            var userId = new Guid(_currentUser.UserId.Value);
+            var userId = _currentUser.UserId.Value;
 
             var customer = await _customerRepository.GetWithAddressesTrackingAsync(userId, cancellationToken);
             if (customer == null)

@@ -32,14 +32,13 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
             Guid productId,
             Guid customerId)
         {
-            ArgumentNullException.ThrowIfNull(productId);
-            ArgumentNullException.ThrowIfNull(customerId);
+
 
             if (string.IsNullOrWhiteSpace(text))
                 throw new EShopDomainException(
                     "Comment text is required.");
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             Text = text.Trim();
             ProductId = productId;
             CustomerId = customerId;
@@ -47,7 +46,6 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
         }
         public bool IsOwnedBy(Guid customerId)
         {
-            ArgumentNullException.ThrowIfNull(customerId);
 
             return CustomerId == customerId;
         }
@@ -77,7 +75,6 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
 
         public void Approve(Guid userId)
         {
-            ArgumentNullException.ThrowIfNull(userId);
 
             if (Status == ProductCommentStatus.Approved)
                 return;
@@ -97,7 +94,6 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
 
         public void Reject(Guid userId)
         {
-            ArgumentNullException.ThrowIfNull(userId);
 
             if (Status == ProductCommentStatus.Rejected)
                 return;

@@ -19,7 +19,7 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
 
         public Task<bool> ExistsByCategoryIdAsync(Guid categoryId, CancellationToken cancellationToken = default)
         {
-            return _dbContext.Set<Product>().AnyAsync(x => x.CategoryId.Value == categoryId,
+            return _dbContext.Set<Product>().AnyAsync(x => x.CategoryId == categoryId,
                    cancellationToken);
         }
       

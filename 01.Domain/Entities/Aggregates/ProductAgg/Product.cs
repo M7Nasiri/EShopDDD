@@ -44,10 +44,8 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
             ArgumentNullException.ThrowIfNull(description);
             ArgumentNullException.ThrowIfNull(stock);
             ArgumentNullException.ThrowIfNull(unitPrice);
-            ArgumentNullException.ThrowIfNull(categoryId);
-            ArgumentNullException.ThrowIfNull(createdByUserId);
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             Name = name;
             Description = description;
             Stock = stock;
@@ -79,7 +77,6 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
 
         public void ChangeCategory(Guid categoryId)
         {
-            ArgumentNullException.ThrowIfNull(categoryId);
 
             CategoryId = categoryId;
         }
@@ -208,7 +205,7 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
 
         public string RemoveImage(System.Guid id)
         {
-            var image = Images.FirstOrDefault(f => f.Id.Value == id);
+            var image = Images.FirstOrDefault(f => f.Id == id);
             if (image == null)
                 throw new EShopNullException("عکس یافت نشد");
 

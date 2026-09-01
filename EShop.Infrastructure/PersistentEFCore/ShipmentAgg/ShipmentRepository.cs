@@ -17,7 +17,7 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
         {
             _context = context;
         }
-        public async Task<Shipment?> GetByOrderIdAsync(_01.Domain.Guid orderId, CancellationToken cancellationToken = default)
+        public async Task<Shipment?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
             return await _context.Set<Shipment>()
            .FirstOrDefaultAsync(s => s.OrderId == orderId, cancellationToken);

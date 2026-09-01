@@ -16,8 +16,8 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
 
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Id)
-                .HasConversion(id => id.Value, value => new Guid(value));
+            builder.Property(p => p.Id);
+
 
             builder.Property(p => p.Name)
                 .HasConversion(name => name.Value, value => new Name(value))
@@ -43,11 +43,9 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
             });
 
             builder.Property(p => p.CategoryId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             builder.Property(p => p.CreatedByUserId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             // نگاشت کالکشن خصوصیات (Attributes)

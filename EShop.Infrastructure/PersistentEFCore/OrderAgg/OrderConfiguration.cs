@@ -17,11 +17,9 @@ namespace EShop.Infrastructure.PersistentEFCore.OrderAgg
             builder.HasKey(o => o.Id);
 
             builder.Property(o => o.Id)
-                .HasConversion(id => id.Value, value => new MyId(value))
                 .ValueGeneratedNever();
 
             builder.Property(o => o.CustomerId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             builder.Property(o => o.Status)
@@ -80,11 +78,9 @@ namespace EShop.Infrastructure.PersistentEFCore.OrderAgg
                 options.HasKey(i => i.Id);
 
                 options.Property(i => i.Id)
-                    .HasConversion(id => id.Value, value => new MyId(value))
                     .ValueGeneratedNever();
 
                 options.Property(i => i.ProductId)
-                    .HasConversion(id => id.Value, value => new Guid(value))
                     .IsRequired();
 
                 // نگاشت Value Object تعداد (Quantity)

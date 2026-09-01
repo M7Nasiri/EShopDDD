@@ -15,11 +15,10 @@ namespace EShop.Infrastructure.PersistentEFCore.PaymentAgg
             builder.ToTable("Payments");
 
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id)
-                .HasConversion(id => id.Value, value => new Guid(value));
+
 
             builder.Property(p => p.OrderId)
-                .HasConversion(id => id.Value, value => new Guid(value))
+
                 .IsRequired();
 
             // نگاشت Value Object مبلغ (Money)

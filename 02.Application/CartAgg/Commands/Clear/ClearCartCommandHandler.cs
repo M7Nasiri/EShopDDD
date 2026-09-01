@@ -37,7 +37,7 @@ namespace _02.Application.CartAgg.Commands.Clear
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
             var cart = await _cartRepository.GetByCustomerIdAsync(
                    customerId,
                    cancellationToken);

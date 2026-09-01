@@ -42,7 +42,7 @@ namespace _02.Application.CommentAgg.Commands.ApproveComment
 
 
 
-            var userId = new Guid(_currentUser.UserId.Value);
+            var userId = _currentUser.UserId.Value;
             var comment = await _commentRepository.GetTracking(request.CommentId, cancellationToken);
 
             if (comment is null)

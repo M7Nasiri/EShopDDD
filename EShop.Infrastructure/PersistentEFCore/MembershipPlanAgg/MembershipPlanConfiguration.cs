@@ -15,8 +15,7 @@ namespace EShop.Infrastructure.PersistentEFCore.MembershipPlanAgg
             builder.ToTable("MembershipPlans");
 
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id)
-                .HasConversion(id => id.Value, value => new Guid(value));
+
 
             // نگاشت Name (Value Object)
             builder.OwnsOne(p => p.Name, name =>

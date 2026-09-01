@@ -23,7 +23,7 @@ namespace EShop.Infrastructure.PersistentEFCore.PaymentAgg
             .FirstOrDefaultAsync(p => p.GatewayTransactionId == transactionId, cancellationToken);
         }
 
-        public async Task<Payment?> GetByOrderIdAsync(_01.Domain.Guid orderId, CancellationToken cancellationToken = default)
+        public async Task<Payment?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
             return await _dbContext.Set<Payment>()
            .Where(p => p.OrderId == orderId)

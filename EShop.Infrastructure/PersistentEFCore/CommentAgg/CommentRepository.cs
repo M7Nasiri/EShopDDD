@@ -20,14 +20,14 @@ namespace EShop.Infrastructure.PersistentEFCore.CommentAgg
         }
 
         public Task<bool> ExistsByProductAndCustomerAsync(
-           _01.Domain.Guid productId,
-           _01.Domain.Guid customerId,
+           Guid productId,
+           Guid customerId,
            CancellationToken cancellationToken = default)
         {
             return _context.Set<ProductComment>()
                 .AnyAsync(
-                    x => x.ProductId.Value == productId.Value &&
-                         x.CustomerId.Value == customerId.Value,
+                    x => x.ProductId == productId &&
+                         x.CustomerId == customerId,
                     cancellationToken);
         }
 
@@ -39,9 +39,9 @@ namespace EShop.Infrastructure.PersistentEFCore.CommentAgg
             return await _context.Set<ProductComment>()
                 .AsNoTracking()
                 .Where(x =>
-                    x.ProductId.Value == productId &&
+                    x.ProductId == productId &&
                     x.Status == ProductCommentStatus.Approved)
-                .OrderByDescending(x => x.Id.Value)
+                .OrderByDescending(x => x.Id)
                 .ToListAsync(cancellationToken);
         }
 
@@ -51,7 +51,7 @@ namespace EShop.Infrastructure.PersistentEFCore.CommentAgg
         {
             return await _context.Set<ProductComment>()
                 .Where(x => x.Status == ProductCommentStatus.Pending)
-                .OrderBy(x => x.Id.Value)
+                .OrderBy(x => x.Id)
                 .ToListAsync(cancellationToken);
         }
 

@@ -19,7 +19,7 @@ namespace EShop.Infrastructure.PersistentEFCore.MembershipAgg
             _dbContext = dbContext;
         }
 
-        public async Task<Membership?> GetActiveMembershipByCustomerIdAsync(_01.Domain.Guid customerId, CancellationToken cancellationToken = default)
+        public async Task<Membership?> GetActiveMembershipByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
             var now = DateTime.UtcNow;
             return await _dbContext.Set<Membership>().Where(ms => ms.CustomerId == customerId 

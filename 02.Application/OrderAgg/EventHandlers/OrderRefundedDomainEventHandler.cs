@@ -31,7 +31,7 @@ namespace _02.Application.OrderAgg.EventHandlers
 
             foreach (var item in notification.Items)
             {
-                var product = await _productRepository.GetAsync(item.ProductId.Value, cancellationToken);
+                var product = await _productRepository.GetAsync(item.ProductId, cancellationToken);
 
                 if (product is not null)
                 {

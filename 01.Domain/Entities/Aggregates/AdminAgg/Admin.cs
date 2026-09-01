@@ -15,7 +15,7 @@ namespace _01.Domain.Entities.Aggregates.AdminAgg
         }
         public Admin(Name fullName)
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid();;
             FullName = fullName;
         }
 

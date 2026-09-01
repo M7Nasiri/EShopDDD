@@ -34,10 +34,10 @@ namespace _02.Application.ProductAgg.Commands.CreateProduct
                     "User must be authenticated.");
             }
 
-            var userId = new Guid(_currentUser.UserId.Value);
+            var userId = _currentUser.UserId.Value;
 
             var product = new Product(new Name(request.Name),new Description(request.Description),new Quantity(request.Stock),
-                new Money(request.UnitPrice),new Guid(request.CategoryId),userId);
+                new Money(request.UnitPrice),request.CategoryId,userId);
 
             await _productRepository.AddAsync(product, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

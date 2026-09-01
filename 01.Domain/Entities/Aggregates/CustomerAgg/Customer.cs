@@ -26,7 +26,6 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
             Guid id,
             Name fullName)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(fullName);
 
             Id = id;

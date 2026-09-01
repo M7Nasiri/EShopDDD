@@ -44,7 +44,7 @@ namespace _02.Application.PaymentAgg.Commands.InitialPayment
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
 
             var orderId = request.OrderId;
             var order = await _orderRepository.GetAsync(orderId, cancellationToken);
@@ -67,7 +67,7 @@ namespace _02.Application.PaymentAgg.Commands.InitialPayment
 
             var gatewayRequest = new PaymentGatewayRequest(
              Amount: payment.Amount.Amount,
-             Description: $"پرداخت سفارش شماره {payment.OrderId.Value}",
+             Description: $"پرداخت سفارش شماره {payment.OrderId}",
              CallbackUrl: "https://localhost:7142/api/payment/callback");
 
             var gatewayResponse = await _paymentGatewayService.RequestPaymentAsync(gatewayRequest, cancellationToken);
@@ -83,7 +83,7 @@ namespace _02.Application.PaymentAgg.Commands.InitialPayment
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var result = new InitiatePaymentResult(
-           PaymentId: payment.Id.Value,
+           PaymentId: payment.Id,
            RedirectUrl: gatewayResponse.RedirectUrl,
            Authority: gatewayResponse.Authority!);
 

@@ -16,7 +16,7 @@ namespace EShop.Infrastructure.PersistentEFCore.CategoryAgg
         {
             _dbContext = dbContext;
         }
-        public Task<bool> HasChildrenAsync(_01.Domain.Guid categoryId, CancellationToken cancellationToken = default)
+        public Task<bool> HasChildrenAsync(Guid categoryId, CancellationToken cancellationToken = default)
         {
             return _dbContext.Set<Category>()
             .AnyAsync(

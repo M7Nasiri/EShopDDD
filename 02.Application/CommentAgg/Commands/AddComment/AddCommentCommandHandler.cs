@@ -40,8 +40,8 @@ namespace _02.Application.CommentAgg.Commands.AddComment
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
-            var productId = new Guid(request.ProductId);
+            var customerId = _currentUser.UserId.Value;
+            var productId = request.ProductId;
 
             var isExist =await _productRepository.ExistsAsync(request.ProductId,cancellationToken);
             if (!isExist)
@@ -57,7 +57,6 @@ namespace _02.Application.CommentAgg.Commands.AddComment
                 throw new EShopDomainException(
                     "You have already submitted a comment for this product.");
             }
-
 
             var comment = new ProductComment(request.Text, productId, customerId);
 

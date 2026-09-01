@@ -26,7 +26,7 @@ namespace _02.Application.CustomerAgg.Commands.RegisterCustomer
                 request.UserName, request.Email, request.Password, request.Name, request.Family);
 
             var fullName = $"{request.Name} {request.Family}";
-            var customer = new Customer(new Guid(userId), new Name(fullName));
+            var customer = new Customer(userId, new Name(fullName));
             await _customerRepository.AddAsync(customer, cancellationToken);
             await _customerRepository.Save();
 

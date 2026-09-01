@@ -20,9 +20,6 @@ namespace EShop.Infrastructure.PersistentEFCore.CartAgg
 
             // شناسه کاربر (اختیاری برای کاربر ثبت‌نام کرده)
             builder.Property(c => c.CustomerId)
-                .HasConversion(
-                    id => id != null ? id.Value : (Guid?)null,
-                    value => value.HasValue ? new Guid(value.Value) : null)
                 .IsRequired(false);
 
             // شناسه مهمان (اختیاری برای سبد مهمان)
@@ -42,17 +39,14 @@ namespace EShop.Infrastructure.PersistentEFCore.CartAgg
                 options.ToTable("CartItems");
 
                 options.HasKey(ci => ci.Id);
-                options.Property(ci => ci.Id)
-                    .HasConversion(id => id.Value, value => new MyId(value));
+                options.Property(ci => ci.Id);
 
                 // کلید خارجی مرجع کالا
                 options.Property(ci => ci.ProductId)
-                    .HasConversion(id => id.Value, value => new Guid(value))
                     .IsRequired();
 
                 // نگاشت Value Object تعداد (Quantity)
                 options.Property(ci => ci.Quantity)
-                    .HasConversion(q => q.Value, value => new Quantity(value))
                     .IsRequired();
 
                 // ایندکس ترکیبی یونیک روی (CartId, ProductId)

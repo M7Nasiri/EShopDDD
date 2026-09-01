@@ -14,7 +14,7 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg.Repository
        CancellationToken cancellationToken = default);
 
         Task<IReadOnlyList<ProductComment>> GetApprovedByProductIdAsync(
-            System.Guid productId,
+            Guid productId,
             CancellationToken cancellationToken = default);
 
         Task<IReadOnlyList<ProductComment>> GetPendingAsync(

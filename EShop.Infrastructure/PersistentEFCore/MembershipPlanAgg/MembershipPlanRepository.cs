@@ -21,7 +21,7 @@ namespace EShop.Infrastructure.PersistentEFCore.MembershipPlanAgg
         {
             return await _dbContext.Set<MembershipPlan>().AsNoTracking().Where(p => p.IsActive).ToListAsync(cancellationToken);
         }
-        public async Task<bool> IsNameUniqueAsync(string name, _01.Domain.Guid? excludeId = null, CancellationToken cancellationToken = default)
+        public async Task<bool> IsNameUniqueAsync(string name, Guid? excludeId = null, CancellationToken cancellationToken = default)
         {
             var query = _dbContext.Set<MembershipPlan>().AsNoTracking().Where(mp => mp.Name.Value == name.Trim());
             if(excludeId != null)

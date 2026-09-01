@@ -21,7 +21,7 @@ namespace _02.Application.ProductAgg.EventHandlers
         {
             // انتشار در RabbitMQ
             await _publishEndpoint.Publish(new ProductStockLowIntegrationEvent(
-                ProductId: notification.ProductId.Value,
+                ProductId: notification.ProductId,
                 CurrentStock: notification.CurrentStock,
                 OccurredOn: DateTime.UtcNow), cancellationToken);
         }

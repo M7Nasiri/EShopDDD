@@ -13,7 +13,7 @@ namespace _01.Domain.Entities.Aggregates.CategoryAgg
 
         public Name Name { get; private set; }
 
-        public Guid ParentCategoryId { get; private set; }
+        public Guid? ParentCategoryId { get; private set; }
 
         private Category()
         {
@@ -26,7 +26,7 @@ namespace _01.Domain.Entities.Aggregates.CategoryAgg
         {
             ArgumentNullException.ThrowIfNull(name);
 
-            Id = System.Guid.NewGuid();
+            Id = Guid.NewGuid();;
 
             ValidateParent(Id, parentCategoryId);
 

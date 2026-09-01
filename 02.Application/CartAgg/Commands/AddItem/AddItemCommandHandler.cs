@@ -40,12 +40,15 @@ namespace _02.Application.CartAgg.Commands.AddItem
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
-            var productId = new Guid(request.ProductId);
+            var customerId = _currentUser.UserId.Value;
+
+
+
+            var productId = request.ProductId;
             var quantity = new Quantity(request.Quantity);
 
             var product = await _productRepository.GetAsync(
-                productId.Value,
+                productId,
                 cancellationToken);
 
             if (product is null)

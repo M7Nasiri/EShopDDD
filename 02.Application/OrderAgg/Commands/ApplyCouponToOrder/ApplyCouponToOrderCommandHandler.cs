@@ -38,7 +38,7 @@ namespace _02.Application.OrderAgg.Commands.ApplyCouponToOrder
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
 
             var order = await _orderRepository.GetDraftOrderByCustomerIdAsync(customerId, cancellationToken);
 

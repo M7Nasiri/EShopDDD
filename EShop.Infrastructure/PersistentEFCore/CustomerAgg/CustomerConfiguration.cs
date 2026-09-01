@@ -17,11 +17,7 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
 
             // ۲. کلید اصلی (Primary Key) و تبدیل Strongly-Typed Id
             builder.HasKey(c => c.Id);
-            builder.Property(c => c.Id)
-                .HasConversion(
-                    id => id.Value,           // هنگام ذخیره در DB: تبدیل Id به Guid
-                    value => new Guid(value)    // هنگام خواندن از DB: تبدیل Guid به Id
-                );
+            builder.Property(c => c.Id);
 
             // ۳. نگاشت Value Object نام (Name)
             builder.OwnsOne(c => c.FullName, name =>

@@ -47,7 +47,7 @@ namespace _02.Application.CategoryAgg.Commands.RemoveCateogry
 
             var hasProducts = await _productRepository
                 .ExistsByCategoryIdAsync(
-                    category.Id.Value,
+                    category.Id,
                     cancellationToken);
 
             category.EnsureCanBeDeleted(

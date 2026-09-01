@@ -15,21 +15,15 @@ namespace EShop.Infrastructure.PersistentEFCore.CommentAgg
             builder.ToTable("ProductComments");
 
             builder.HasKey(pc => pc.Id);
-            builder.Property(pc => pc.Id)
-                .HasConversion(id => id.Value, value => new Guid(value));
+            builder.Property(pc => pc.Id);
 
             builder.Property(pc => pc.ProductId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             builder.Property(pc => pc.CustomerId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             builder.Property(pc => pc.ModeratedByUserId)
-                .HasConversion(
-                    id => id != null ? id.Value : (Guid?)null,
-                    value => value.HasValue ? new Guid(value.Value) : null)
                 .IsRequired(false);
 
             // متن کامنت با طول استاندارد و پشتیبانی از یونیکد (فارسی)

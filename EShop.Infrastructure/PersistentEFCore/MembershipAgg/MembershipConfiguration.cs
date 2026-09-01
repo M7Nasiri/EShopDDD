@@ -15,15 +15,12 @@ namespace EShop.Infrastructure.PersistentEFCore.MembershipAgg
             builder.ToTable("Memberships");
 
             builder.HasKey(m => m.Id);
-            builder.Property(m => m.Id)
-                .HasConversion(id => id.Value, value => new Guid(value));
+            builder.Property(m => m.Id);
 
             builder.Property(m => m.CustomerId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             builder.Property(m => m.PlanId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             builder.Property(m => m.DiscountPercent)

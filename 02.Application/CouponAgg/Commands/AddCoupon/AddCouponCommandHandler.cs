@@ -37,7 +37,7 @@ namespace _02.Application.CouponAgg.Commands.AddCoupon
                     "User must be authenticated.");
             }
 
-            var userId = new Guid(_currentUser.UserId.Value);
+            var userId = _currentUser.UserId.Value;
 
             var isUnique = await _couponRepository.IsCodeUniqueAsync(request.Code, cancellationToken);
             if (!isUnique)

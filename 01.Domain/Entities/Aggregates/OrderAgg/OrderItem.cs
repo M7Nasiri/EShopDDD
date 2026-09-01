@@ -25,7 +25,6 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
             Quantity quantity,
             Money unitPrice)
         {
-            ArgumentNullException.ThrowIfNull(productId);
             ArgumentNullException.ThrowIfNull(quantity);
             ArgumentNullException.ThrowIfNull(unitPrice);
 
@@ -33,7 +32,7 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
                 throw new EShopDomainException(
                     "Order item quantity must be at least one.");
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             ProductId = productId;
             Quantity = quantity;
             UnitPrice = unitPrice;

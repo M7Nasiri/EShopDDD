@@ -40,7 +40,7 @@ namespace EShop.Infrastructure.Consumers
             _logger.LogWarning($"سفارش با شماره {msg.OrderId} به مبلغ {msg.Amount} با کد پیگری {msg.PaymentId} با موفقیت ، پرداخت شد.");
             //Need ComeBack
 
-            var existingShipment = await _shipmentRepository.GetByOrderIdAsync(new Guid(msg.OrderId), context.CancellationToken);
+            var existingShipment = await _shipmentRepository.GetByOrderIdAsync(msg.OrderId, context.CancellationToken);
             if (existingShipment is not null)
             {
                 _logger.LogWarning("مرسوله برای سفارش {OrderId} قبلاً ایجاد شده است.", msg.OrderId);
@@ -62,7 +62,7 @@ namespace EShop.Infrastructure.Consumers
             _shipmentRepository.Add(shipment);
             await _unitOfWork.SaveChangesAsync(context.CancellationToken);
 
-            _logger.LogInformation("مرسوله با شناسه {ShipmentId} برای سفارش {OrderId} با موفقیت ثبت گردید.", shipment.Id.Value, msg.OrderId);
+            _logger.LogInformation("مرسوله با شناسه {ShipmentId} برای سفارش {OrderId} با موفقیت ثبت گردید.", shipment.Id, msg.OrderId);
         }
 
 

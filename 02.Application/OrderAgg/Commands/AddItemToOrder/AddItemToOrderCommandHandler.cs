@@ -39,8 +39,8 @@ namespace _02.Application.OrderAgg.Commands.AddItemToOrder
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
-            var productId = new Guid(request.ProductId);
+            var customerId = _currentUser.UserId.Value;
+            var productId = request.ProductId;
 
             var product =await _productRepository.GetTracking(request.ProductId, cancellationToken);
 

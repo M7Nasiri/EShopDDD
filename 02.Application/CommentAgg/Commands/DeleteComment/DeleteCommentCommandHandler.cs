@@ -41,7 +41,7 @@ namespace _02.Application.CommentAgg.Commands.DeleteComment
                     "You do not have permission to approve comments.");
             }
 
-            var userId = new Guid(_currentUser.UserId.Value);
+            var userId = _currentUser.UserId.Value;
             var comment = await _commentRepository.GetAsync(request.CommentId, cancellationToken);
 
             if (comment is null)

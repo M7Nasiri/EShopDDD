@@ -27,7 +27,7 @@ namespace _02.Application.PaymentAgg.EventHandlers
 
         public async Task Handle(PaymentSuccededDomainEvent notification, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(notification.OrderId.Value, cancellationToken);
+            var order = await _orderRepository.GetAsync(notification.OrderId, cancellationToken);
             if (order is null)
                 return;
 
@@ -37,8 +37,8 @@ namespace _02.Application.PaymentAgg.EventHandlers
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             await _publishEndpoint.Publish(new PaymentSuccededIntegrationEvent(
-                   PaymentId: notification.PaymentId.Value,
-                   OrderId: notification.OrderId.Value,
+                   PaymentId: notification.PaymentId,
+                   OrderId: notification.OrderId,
                    Amount: notification.Amount.Amount,
                    OccuredOn:DateTime.UtcNow), cancellationToken);
         }

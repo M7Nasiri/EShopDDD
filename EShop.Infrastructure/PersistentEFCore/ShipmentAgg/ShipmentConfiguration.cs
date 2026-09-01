@@ -17,12 +17,10 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
             // ۱. کلید اصلی
             builder.HasKey(s => s.Id);
             builder.Property(s => s.Id)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .ValueGeneratedNever();
 
             // ۲. ارتباط با سفارش (Strongly Typed Id)
             builder.Property(s => s.OrderId)
-                .HasConversion(id => id.Value, value => new Guid(value))
                 .IsRequired();
 
             // ۳. وضعیت مرسوله (تبدیل Enum به string برای خوانایی بهتر در دیتابیس)

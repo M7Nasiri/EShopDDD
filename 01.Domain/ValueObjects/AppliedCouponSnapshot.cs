@@ -15,7 +15,7 @@ namespace _01.Domain.ValueObjects
             string code,
             int percent)
         {
-            CouponId = Guid.New();
+            CouponId = Guid.NewGuid();
 
             if (string.IsNullOrWhiteSpace(code))
                 throw new EShopCouponException();

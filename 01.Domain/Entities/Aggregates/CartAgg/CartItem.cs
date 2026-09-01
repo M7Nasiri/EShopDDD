@@ -18,10 +18,9 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
             Guid productId,
             Quantity quantity)
         {
-            ArgumentNullException.ThrowIfNull(productId);
             ArgumentNullException.ThrowIfNull(quantity);
 
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid();;
             ProductId = productId;
             Quantity = quantity;
         }

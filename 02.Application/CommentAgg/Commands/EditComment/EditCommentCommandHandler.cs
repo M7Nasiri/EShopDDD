@@ -35,7 +35,7 @@ namespace _02.Application.CommentAgg.Commands.EditComment
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
             var comment = await _commentRepository.GetTracking(request.CommentId, cancellationToken);
 
             if (comment is null)

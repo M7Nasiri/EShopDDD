@@ -25,10 +25,9 @@ namespace _01.Domain.Entities.Aggregates.ShipmentAgg
             Guid orderId,
             Address address)
         {
-            ArgumentNullException.ThrowIfNull(orderId);
             ArgumentNullException.ThrowIfNull(address);
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             OrderId = orderId;
             Address = address;
             Status = ShipmentStatus.Preparing;

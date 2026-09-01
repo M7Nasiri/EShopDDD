@@ -24,9 +24,9 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
         }
 
         public Cart(
-            Guid customerId)
+            Guid? customerId)
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid();;
             CustomerId = customerId;
         }
 
@@ -37,7 +37,7 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
                 throw new EShopDomainException(
                     "Guest id is required.");
 
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid();;
             GuestId = guestId.Trim();
         }
 
@@ -47,7 +47,6 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
             Quantity quantity,
             Quantity availableStock)
         {
-            ArgumentNullException.ThrowIfNull(productId);
             ArgumentNullException.ThrowIfNull(quantity);
             ArgumentNullException.ThrowIfNull(availableStock);
 

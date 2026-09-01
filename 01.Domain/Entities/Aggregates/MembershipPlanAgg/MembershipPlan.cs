@@ -42,7 +42,7 @@ namespace _01.Domain.Entities.Aggregates.MembershipPlanAgg
                 throw new EShopDomainException(
                     "Membership duration must be greater than zero.");
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             Name = name;
             Price = price;
             DiscountPercent = discountPercent;

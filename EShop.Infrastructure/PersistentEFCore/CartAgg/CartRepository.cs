@@ -26,7 +26,7 @@ namespace EShop.Infrastructure.PersistentEFCore.CartAgg
                     cancellationToken);
         }
 
-        public Task<Cart?> GetByCustomerIdAsync(_01.Domain.Guid customerId, CancellationToken cancellationToken)
+        public Task<Cart?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
         {
             return _dbContext.Set<Cart>()
                  .Include(x => x.Items)

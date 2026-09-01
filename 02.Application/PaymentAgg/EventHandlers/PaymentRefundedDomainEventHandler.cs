@@ -25,7 +25,7 @@ namespace _02.Application.PaymentAgg.EventHandlers
 
         public async Task Handle(PaymentRefundedDomainEvent notification, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetAsync(notification.OrderId.Value, cancellationToken);
+            var order = await _orderRepository.GetAsync(notification.OrderId, cancellationToken);
             if (order is null)
                 return;
 

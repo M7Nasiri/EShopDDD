@@ -68,9 +68,8 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
         public Order(
             Guid customerId)
         {
-            ArgumentNullException.ThrowIfNull(customerId);
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             CustomerId = customerId;
             Status = OrderStatus.Draft;
             CreatedAt = DomainDate.Now;
@@ -83,7 +82,6 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
         {
             EnsureCanModify();
 
-            ArgumentNullException.ThrowIfNull(productId);
             ArgumentNullException.ThrowIfNull(quantity);
             ArgumentNullException.ThrowIfNull(unitPrice);
 
@@ -108,7 +106,6 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
         {
             EnsureCanModify();
 
-            ArgumentNullException.ThrowIfNull(productId);
 
             var item =
                 _items.FirstOrDefault(

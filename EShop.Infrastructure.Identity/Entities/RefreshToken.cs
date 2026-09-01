@@ -55,7 +55,7 @@ public sealed class RefreshToken
                 "Refresh token expiration must be in the future.",
                 nameof(expiresAtUtc));
 
-        Id = Guid.NewGuid();
+        Id = Guid.NewGuid();;
         TokenHash = tokenHash;
         UserId = userId;
         ExpiresAtUtc = expiresAtUtc;

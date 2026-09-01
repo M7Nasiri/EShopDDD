@@ -21,7 +21,7 @@ namespace _02.Application.OrderAgg.Commands.ProcessOrderPaymentCallback
 
         public async Task<OperationResult> Handle(ProcessOrderPaymentCallbackCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetWithItemsTrackingAsync(new Guid(request.OrderId), cancellationToken);
+            var order = await _orderRepository.GetWithItemsTrackingAsync(request.OrderId, cancellationToken);
             if (order is null)
                 throw new EShopDomainException("سفارش یافت نشد.");
 

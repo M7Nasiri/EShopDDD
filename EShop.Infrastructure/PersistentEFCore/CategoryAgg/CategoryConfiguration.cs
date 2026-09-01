@@ -18,15 +18,11 @@ namespace EShop.Infrastructure.PersistentEFCore.CategoryAgg
 
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Id)
-                .HasConversion(
-                    id => id.Value,
-                    value => new MyId(value));
+            builder.Property(x => x.Id);
 
-            builder.Property(x => x.ParentCategoryId)
-                .HasConversion(
-                    id => id == null ? (Guid?)null : id.Value,
-                    value => value == null ? null : new Guid(value.Value));
+
+            builder.Property(x => x.ParentCategoryId);
+
 
             builder.HasOne<Category>()
                 .WithMany()

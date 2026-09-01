@@ -30,7 +30,7 @@ namespace _02.Application.CategoryAgg.Commands.EditCategory
 
            var name = new Name(request.Name);
 
-            _01.Domain.Guid? parentCategoryId = null;
+            Guid? parentCategoryId = null;
 
             if (request.ParentCategoryId.HasValue)
             {
@@ -44,8 +44,8 @@ namespace _02.Application.CategoryAgg.Commands.EditCategory
                         "Parent category was not found.");
                 }
 
-                parentCategoryId = new Guid(
-                    request.ParentCategoryId.Value);
+                parentCategoryId = 
+                    request.ParentCategoryId;
             }
 
             if (category.ParentCategoryId == parentCategoryId)

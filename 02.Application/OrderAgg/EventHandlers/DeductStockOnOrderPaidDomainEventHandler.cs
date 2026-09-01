@@ -33,9 +33,9 @@ namespace _02.Application.OrderAgg.EventHandlers
             // کسر موجودی تک‌تک محصولات خریداری شده در تراکنش دیتابیس
             foreach (var item in order.Items)
             {
-                var product = await _productRepository.GetTracking(item.ProductId.Value, cancellationToken);
+                var product = await _productRepository.GetTracking(item.ProductId, cancellationToken);
                 if (product is null)
-                    throw new EShopDomainException($"محصول با شناسه {item.ProductId.Value} یافت نشد.");
+                    throw new EShopDomainException($"محصول با شناسه {item.ProductId} یافت نشد.");
 
                 // کاهش موجودی در دامین محصول
                 product.DecreaseStock(item.Quantity);

@@ -38,7 +38,7 @@ namespace _02.Application.OrderAgg.Commands.CheckoutOrder
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
 
             var order = await _orderRepository.GetDraftOrderByCustomerIdAsync(customerId, cancellationToken);
             if (order is null)
@@ -47,7 +47,7 @@ namespace _02.Application.OrderAgg.Commands.CheckoutOrder
             order.FinalizeOrder();
 
             var resultData = new CheckoutOrderResult(
-                order.Id.Value,
+                order.Id,
                 order.TotalPrice.Amount
             );
 

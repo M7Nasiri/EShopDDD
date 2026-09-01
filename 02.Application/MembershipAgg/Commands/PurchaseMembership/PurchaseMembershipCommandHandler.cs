@@ -41,7 +41,7 @@ namespace _02.Application.MembershipAgg.Commands.PurchaseMembership
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
 
             var activeMembership = _memberShipRepository.GetActiveMembershipByCustomerIdAsync(customerId, cancellationToken);
             if (activeMembership != null)

@@ -19,7 +19,7 @@ namespace EShop.Infrastructure.PersistentEFCore.OrderAgg
             _context = context;
         }
 
-        public async Task<Order?> GetByIdReadOnlyAsync(_01.Domain.Guid orderId, CancellationToken cancellationToken = default)
+        public async Task<Order?> GetByIdReadOnlyAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
             return await _context.Set<Order>()
             .AsNoTracking()
@@ -27,14 +27,14 @@ namespace EShop.Infrastructure.PersistentEFCore.OrderAgg
             .FirstOrDefaultAsync(o => o.Id == orderId, cancellationToken);
         }
 
-        public async Task<Order?> GetDraftOrderByCustomerIdAsync(_01.Domain.Guid customerId, CancellationToken cancellationToken = default)
+        public async Task<Order?> GetDraftOrderByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
         {
             return await _context.Set<Order>()
              .Include(o => o.Items).AsTracking()
              .FirstOrDefaultAsync(o => o.CustomerId == customerId && o.Status == OrderStatus.Draft, cancellationToken);
         }
 
-        public async Task<Order?> GetWithItemsTrackingAsync(_01.Domain.Guid orderId, CancellationToken cancellationToken = default)
+        public async Task<Order?> GetWithItemsTrackingAsync(Guid orderId, CancellationToken cancellationToken = default)
         {
             return await _context.Set<Order>().Include(o=>o.Items).Where(o=>o.Id == orderId)
                 .FirstOrDefaultAsync(cancellationToken);

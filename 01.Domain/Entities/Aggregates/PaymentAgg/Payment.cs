@@ -33,14 +33,13 @@ namespace _01.Domain.Entities.Aggregates.PaymentAgg
             Money amount,
             PaymentMethod method)
         {
-            ArgumentNullException.ThrowIfNull(orderId);
             ArgumentNullException.ThrowIfNull(amount);
 
             if (amount.Amount <= 0)
                 throw new EShopDomainException(
                     "Payment amount must be greater than zero.");
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             OrderId = orderId;
             Amount = amount;
             Method = method;

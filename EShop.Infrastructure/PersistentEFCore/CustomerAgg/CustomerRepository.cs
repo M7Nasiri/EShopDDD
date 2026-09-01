@@ -18,14 +18,14 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
         {
             _context = context;
         }
-        public async Task<Customer?> GetWithAddressesTrackingAsync(_01.Domain.Guid id, CancellationToken cancellationToken = default)
+        public async Task<Customer?> GetWithAddressesTrackingAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await Context.Set<Customer>()
                 .Include(c => c.Addresses) 
                 .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
         }
 
-        public async Task<Customer?> GetWithAddressesNoTrackingAsync(_01.Domain.Guid id, CancellationToken cancellationToken = default)
+        public async Task<Customer?> GetWithAddressesNoTrackingAsync(Guid id, CancellationToken cancellationToken = default)
         {
             return await Context.Set<Customer>()
                 .AsNoTracking()

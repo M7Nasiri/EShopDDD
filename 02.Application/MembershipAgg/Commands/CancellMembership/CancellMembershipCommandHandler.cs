@@ -36,7 +36,7 @@ namespace _02.Application.MembershipAgg.Commands.CancellMembership
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
             var membership = await _memberShipRepository.GetTracking(request.MembershipId, cancellationToken);
 
             if (membership == null)

@@ -39,7 +39,7 @@ namespace EShop.Infrastructure.Identity.Entities
                     "Email is required.",
                     nameof(email));
 
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid();;
 
             UserName = userName.Trim();
             Email = email.Trim().ToLowerInvariant();

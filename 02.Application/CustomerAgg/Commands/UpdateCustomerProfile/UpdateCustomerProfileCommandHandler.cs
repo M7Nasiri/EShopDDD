@@ -34,9 +34,9 @@ namespace _02.Application.CustomerAgg.Commands.UpdateCustomerProfile
                     "User must be authenticated.");
             }
 
-            var customerId = new Guid(_currentUser.UserId.Value);
+            var customerId = _currentUser.UserId.Value;
 
-            var customer =await  _customerRepository.GetTracking(customerId.Value, cancellationToken);
+            var customer =await  _customerRepository.GetTracking(customerId, cancellationToken);
             if (customer == null)
                 throw new EShopNullException("Custoemr was not found.");
 

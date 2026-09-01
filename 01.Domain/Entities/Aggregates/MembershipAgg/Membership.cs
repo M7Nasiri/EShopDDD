@@ -35,7 +35,6 @@ namespace _01.Domain.Entities.Aggregates.MembershipAgg
             MembershipPlan plan,
             DomainDate startDate)
         {
-            ArgumentNullException.ThrowIfNull(customerId);
             ArgumentNullException.ThrowIfNull(plan);
             ArgumentNullException.ThrowIfNull(startDate);
 
@@ -43,7 +42,7 @@ namespace _01.Domain.Entities.Aggregates.MembershipAgg
                 throw new EShopDomainException(
                     "Membership plan is inactive.");
 
-            Id = Guid.New();
+            Id = Guid.NewGuid();
             CustomerId = customerId;
             PlanId = plan.Id;
             DiscountPercent = plan.DiscountPercent;
