@@ -1,4 +1,4 @@
-﻿using EShop.Shared.Abstractions.Exceptions;
+﻿using EShop.Shared.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Text;

@@ -1,6 +1,6 @@
 ﻿using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
+using EShop.Shared.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,9 +11,8 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
     {
         private readonly List<CartItem> _items = new();
 
-        public Id Id { get; private set; }
 
-        public Id? CustomerId { get; private set; }
+        public Guid? CustomerId { get; private set; }
 
         public string? GuestId { get; private set; }
 
@@ -25,39 +24,47 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
         }
 
         public Cart(
-            Id id,
-            Id customerId)
+            Guid customerId)
         {
-            Id = id;
+            Id = Guid.NewGuid();
             CustomerId = customerId;
         }
 
         public Cart(
-            Id id,
             string guestId)
         {
             if (string.IsNullOrWhiteSpace(guestId))
                 throw new EShopDomainException(
                     "Guest id is required.");
 
-            Id = id;
-            GuestId = guestId;
+            Id = Guid.NewGuid();
+            GuestId = guestId.Trim();
         }
 
+
         public void AddItem(
-            Id productId,
-            Quantity quantity)
+            Guid productId,
+            Quantity quantity,
+            Quantity availableStock)
         {
             ArgumentNullException.ThrowIfNull(productId);
             ArgumentNullException.ThrowIfNull(quantity);
+            ArgumentNullException.ThrowIfNull(availableStock);
 
-            if (quantity.Value < 1)
+            var currentQuantity = _items
+                .FirstOrDefault(x => x.ProductId == productId)?
+                .Quantity.Value ?? 0;
+
+            var finalQuantity = currentQuantity + quantity.Value;
+
+            if (finalQuantity > availableStock.Value)
+            {
                 throw new EShopDomainException(
-                    "Quantity must be greater than zero.");
+                    "Requested quantity exceeds available stock.");
+            }
 
-            var item =
-                _items.FirstOrDefault(
-                    x => x.ProductId == productId);
+            var item = _items.FirstOrDefault(
+                x => x.ProductId == productId);
 
             if (item is not null)
             {
@@ -65,13 +72,10 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
                 return;
             }
 
-            _items.Add(
-                new CartItem(
-                    productId,
-                    quantity));
+            _items.Add(new CartItem(productId, quantity));
         }
 
-        public void RemoveItem(Id productId)
+        public void RemoveItem(Guid productId)
         {
             ArgumentNullException.ThrowIfNull(productId);
 

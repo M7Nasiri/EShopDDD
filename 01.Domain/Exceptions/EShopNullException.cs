@@ -1,7 +1,4 @@
-﻿using EShop.Shared.Abstractions.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EShop.Shared.Domain.Exceptions;
 
 namespace _01.Domain.Exceptions
 {
@@ -10,7 +7,7 @@ namespace _01.Domain.Exceptions
         public object? Par { get; set; }
         public EShopNullException(string message = $"{nameof(Par)} is null.") : base(message)
         {
-            
+
         }
     }
 }

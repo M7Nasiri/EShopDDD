@@ -1,23 +1,22 @@
 ﻿using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.MembershipPlanAgg
 {
-    public class MembershipPlan : AggregateRoot
+    public sealed class MembershipPlan : AggregateRoot
     {
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
-        public string Name { get; private set; }
+        public Name Name { get; private set; }
 
         public Money Price { get; private set; }
 
-        public MembershipDuration Duration { get; private set; }
-
         public int DiscountPercent { get; private set; }
+
+        public bool FreeShipping { get; private set; }
+
+        public MembershipDuration DurationInDays { get; private set; }
 
         public bool IsActive { get; private set; }
 
@@ -26,34 +25,29 @@ namespace _01.Domain.Entities.Aggregates.MembershipPlanAgg
         }
 
         public MembershipPlan(
-            Id id,
-            string name,
+            Name name,
             Money price,
-            MembershipDuration duration,
-            int discountPercent)
+            int discountPercent,
+            bool freeShipping,
+            MembershipDuration durationInDays)
         {
-            if (id is null)
-                throw new EShopNullException(nameof(id));
-
-            if (string.IsNullOrWhiteSpace(name))
-                throw new EShopDomainException(
-                    "Membership plan name is required.");
-
-            if (price is null)
-                throw new EShopNullException(nameof(price));
-
-            if (duration is null)
-                throw new EShopNullException(nameof(duration));
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(price);
 
             if (discountPercent is < 0 or > 100)
                 throw new EShopDomainException(
                     "Discount percent must be between 0 and 100.");
 
-            Id = id;
-            Name = name.Trim();
+            if (durationInDays.Days <= 0)
+                throw new EShopDomainException(
+                    "Membership duration must be greater than zero.");
+
+            Id = Guid.New();
+            Name = name;
             Price = price;
-            Duration = duration;
             DiscountPercent = discountPercent;
+            FreeShipping = freeShipping;
+            DurationInDays = durationInDays;
             IsActive = true;
         }
 
@@ -64,30 +58,22 @@ namespace _01.Domain.Entities.Aggregates.MembershipPlanAgg
             Price = price;
         }
 
-        public void ChangeDiscount(int discountPercent)
+        public void ChangeDiscount(int percent)
         {
-            if (discountPercent is < 0 or > 100)
-                throw new EShopDomainException(
-                    "Discount percent must be between 0 and 100.");
+            if (percent is < 0 or > 100)
+                throw new EShopDomainException();
 
-            DiscountPercent = discountPercent;
+            DiscountPercent = percent;
         }
 
-        public void ChangeDuration(MembershipDuration duration)
-        {
-            ArgumentNullException.ThrowIfNull(duration);
-
-            Duration = duration;
-        }
-
-        public void Activate()
-        {
-            IsActive = true;
-        }
-
-        public void Deactivate()
+        public void Disable()
         {
             IsActive = false;
+        }
+
+        public void Enable()
+        {
+            IsActive = true;
         }
     }
 }

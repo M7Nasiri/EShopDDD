@@ -2,10 +2,7 @@
 using _01.Domain.DoamainEvents.Orders;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.OrderAgg
 {
@@ -14,72 +11,73 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
     {
         private readonly List<OrderItem> _items = new();
 
-        public Id Id { get; private set; }
 
-        public Id CustomerId { get; private set; }
+        public Guid CustomerId { get; private set; }
 
         public IReadOnlyCollection<OrderItem> Items =>
             _items.AsReadOnly();
 
-        public ShippingAddress? ShippingAddress { get; private set; }
+        public Address ShippingAddress { get; private set; }
 
         public AppliedCouponSnapshot? AppliedCoupon { get; private set; }
 
         public DiscountSnapshot? MembershipDiscount { get; private set; }
+        public Money BaseShippingCost { get; private set; } = Money.Zero;
+
+        public Money ShippingCost =>
+            (MembershipDiscount?.FreeShipping == true) ? Money.Zero : BaseShippingCost;
 
         public OrderStatus Status { get; private set; }
 
         public DomainDate CreatedAt { get; private set; }
 
         public Money SubTotal =>
-            _items
-                .Select(x => x.TotalPrice)
-                .Aggregate(
-                    Money.Zero,
-                    (current, total) => current + total);
+        _items
+            .Select(x => x.TotalPrice)
+            .Aggregate(
+                Money.Zero,
+                (current, total) => current + total);
 
-        public Money TotalPrice
+
+        public Money DiscountAmount
         {
             get
             {
-                var result = SubTotal;
-
                 if (MembershipDiscount is not null)
                 {
-                    result =
-                        MembershipDiscount.Apply(result);
+                    var discountedPrice = MembershipDiscount.Apply(SubTotal);
+                    return SubTotal - discountedPrice;
                 }
 
                 if (AppliedCoupon is not null)
                 {
-                    result =
-                        result.ApplyPercentageDiscount(
-                            AppliedCoupon.Percent);
+                    var discountedPrice = SubTotal.ApplyPercentageDiscount(AppliedCoupon.Percent);
+                    return SubTotal - discountedPrice;
                 }
 
-                return result;
+                return Money.Zero;
             }
         }
+
+        public Money TotalPrice => (SubTotal - DiscountAmount) + ShippingCost;
 
         private Order()
         {
         }
 
         public Order(
-            Id id,
-            Id customerId)
+            Guid customerId)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(customerId);
 
-            Id = id;
+            Id = Guid.New();
             CustomerId = customerId;
             Status = OrderStatus.Draft;
             CreatedAt = DomainDate.Now;
         }
 
         public void AddItem(
-            Id productId,
+            Guid productId,
             Quantity quantity,
             Money unitPrice)
         {
@@ -106,7 +104,7 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
                     unitPrice));
         }
 
-        public void RemoveItem(Id productId)
+        public void RemoveItem(Guid productId)
         {
             EnsureCanModify();
 
@@ -124,7 +122,7 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
         }
 
         public void ChangeItemQuantity(
-            Id productId,
+            Guid productId,
             Quantity quantity)
         {
             EnsureCanModify();
@@ -155,9 +153,16 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
                     new Quantity(Math.Abs(difference)));
             }
         }
+        public void SetShippingCost(Money cost)
+        {
+            EnsureCanModify();
+            ArgumentNullException.ThrowIfNull(cost);
+
+            BaseShippingCost = cost;
+        }
 
         public void SetShippingAddress(
-            ShippingAddress address)
+            Address address)
         {
             EnsureCanModify();
 
@@ -194,8 +199,8 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
 
             ArgumentNullException.ThrowIfNull(discount);
 
-            if (MembershipDiscount is not null)
-                throw new EShopDomainException(
+
+            MembershipDiscount = discount ?? throw new EShopDomainException(
                     "Membership discount already applied.");
 
             MembershipDiscount = discount;
@@ -245,6 +250,24 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
                     CustomerId,
                     TotalPrice));
         }
+        public void MarkAsRefunded()
+        {
+            if (Status != OrderStatus.Paid)
+                throw new EShopDomainException("تنها سفارش‌های پرداخت‌شده قابل استرداد (Refund) هستند.");
+
+            ChangeStatus(OrderStatus.Cancelled);
+
+    
+            var cancelledItems = _items
+                .Select(i => new OrderCancelledItemDto(i.ProductId, i.Quantity.Value))
+                .ToList();
+
+            AddDomainEvent(
+                new OrderCancelledDomainEvent(
+                    Id,
+                    CustomerId,
+                    cancelledItems));
+        }
 
         public void Ship()
         {
@@ -256,18 +279,19 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
             ChangeStatus(OrderStatus.Delivered);
         }
 
-        public void Cancel()
-        {
-            if (Status == OrderStatus.Cancelled)
-                return;
+        //public void Cancel()
+        //{
+        //    if (Status == OrderStatus.Cancelled)
+        //        return;
 
-            ChangeStatus(OrderStatus.Cancelled);
+        //    ChangeStatus(OrderStatus.Cancelled);
 
-            AddDomainEvent(
-                new OrderCancelledDomainEvent(
-                    Id,
-                    CustomerId));
-        }
+        //    AddDomainEvent(
+        //        new OrderCancelledDomainEvent(
+        //            Id,
+        //            CustomerId));
+        //}
+       
 
         private void ChangeStatus(
             OrderStatus newStatus)
@@ -285,6 +309,7 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
 
             Status = newStatus;
         }
+   
 
         private static OrderStatus[] GetAllowedTransitions(
             OrderStatus status)

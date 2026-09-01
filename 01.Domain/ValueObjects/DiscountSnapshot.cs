@@ -9,10 +9,11 @@ namespace _01.Domain.ValueObjects
     {
         public string Reason { get; }
         public int Percent { get; }
+        public bool FreeShipping { get; }
 
         public DiscountSnapshot(
             string reason,
-            int percent)
+            int percent, bool freeShipping)
         {
             if (string.IsNullOrWhiteSpace(reason))
                 throw new EShopDomainException(
@@ -24,6 +25,7 @@ namespace _01.Domain.ValueObjects
 
             Reason = reason.Trim();
             Percent = percent;
+            FreeShipping = freeShipping;
         }
 
         public Money Apply(Money price) =>

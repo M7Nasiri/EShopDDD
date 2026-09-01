@@ -1,17 +1,18 @@
 ﻿using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
+using EShop.Shared.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace _01.Domain.DoamainEvents.Orders
 {
-    public sealed record OrderPaidDomainEvent(
-    Id OrderId,
-    Id CustomerId,
-    Money TotalPrice) : IDomainEvent
+    public sealed class OrderPaidDomainEvent(
+    Guid orderId,
+    Guid customerId,
+    Money totalPrice) : BaseDomainEvent
     {
-        public DateTime OccurredOnUtc =>
-            DateTime.UtcNow;
+        public Guid OrderId { get; private set; } = orderId;
+        public Guid CustomerId { get; private set; } = customerId;
+        public Money TotalPrice { get; private set; } = totalPrice;
     }
 }

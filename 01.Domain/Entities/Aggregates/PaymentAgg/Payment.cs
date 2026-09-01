@@ -2,18 +2,15 @@
 using _01.Domain.DoamainEvents.Payment;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.PaymentAgg
 {
     public sealed class Payment : AggregateRoot
     {
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
-        public Id OrderId { get; private set; }
+        public Guid OrderId { get; private set; }
 
         public Money Amount { get; private set; }
 
@@ -22,7 +19,9 @@ namespace _01.Domain.Entities.Aggregates.PaymentAgg
         public PaymentStatus Status { get; private set; }
 
         public string? GatewayTransactionId { get; private set; }
+        public string? RefundTransactionId { get; private set; }
 
+        public string? Authority { get; private set; }
         public DomainDate CreatedAt { get; private set; }
 
         private Payment()
@@ -30,12 +29,10 @@ namespace _01.Domain.Entities.Aggregates.PaymentAgg
         }
 
         public Payment(
-            Id id,
-            Id orderId,
+            Guid orderId,
             Money amount,
             PaymentMethod method)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(orderId);
             ArgumentNullException.ThrowIfNull(amount);
 
@@ -43,7 +40,7 @@ namespace _01.Domain.Entities.Aggregates.PaymentAgg
                 throw new EShopDomainException(
                     "Payment amount must be greater than zero.");
 
-            Id = id;
+            Id = Guid.New();
             OrderId = orderId;
             Amount = amount;
             Method = method;
@@ -80,7 +77,7 @@ namespace _01.Domain.Entities.Aggregates.PaymentAgg
             Status = PaymentStatus.Succeeded;
 
             AddDomainEvent(
-                new PaymentSucceededDomainEvent(
+                new PaymentSuccededDomainEvent(
                     Id,
                     OrderId,
                     Amount));
@@ -103,5 +100,42 @@ namespace _01.Domain.Entities.Aggregates.PaymentAgg
 
             Status = PaymentStatus.Refunded;
         }
+        public void MarkAsRefunded(
+    string refundTransactionId)
+        {
+            if (string.IsNullOrWhiteSpace(refundTransactionId))
+                throw new EShopDomainException(
+                    "Refund transaction id is required.");
+
+            if (Status == PaymentStatus.Refunded)
+                return;
+
+            if (Status != PaymentStatus.Succeeded)
+                throw new EShopDomainException(
+                    "Only successful payment can be refunded.");
+
+            RefundTransactionId =
+                refundTransactionId.Trim();
+
+            Status = PaymentStatus.Refunded;
+
+            AddDomainEvent(
+                new PaymentRefundedDomainEvent(
+                    Id,
+                    OrderId,
+                    Amount,
+                    RefundTransactionId));
+        }
+        public void SetAuthority(string? authority)
+        {
+            if (Status != PaymentStatus.Pending && Status != PaymentStatus.Processing)
+                throw new EShopDomainException("امکان ثبت یا تغییر Authority برای تراکنشی که نهایی شده است وجود ندارد.");
+
+            if (string.IsNullOrWhiteSpace(authority))
+                throw new EShopDomainException("شناسه درگاه (Authority) نمی‌تواند خالی باشد.");
+
+            Authority = authority;
+        }
+
     }
 }

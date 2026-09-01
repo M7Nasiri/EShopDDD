@@ -1,20 +1,17 @@
 ﻿using _01.Domain.Consts;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.ShipmentAgg
 {
     public sealed class Shipment : AggregateRoot
     {
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
-        public Id OrderId { get; private set; }
+        public Guid OrderId { get; private set; }
 
-        public ShippingAddress Address { get; private set; }
+        public Address Address { get; private set; }
 
         public ShipmentStatus Status { get; private set; }
 
@@ -25,15 +22,13 @@ namespace _01.Domain.Entities.Aggregates.ShipmentAgg
         }
 
         public Shipment(
-            Id id,
-            Id orderId,
-            ShippingAddress address)
+            Guid orderId,
+            Address address)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(orderId);
             ArgumentNullException.ThrowIfNull(address);
 
-            Id = id;
+            Id = Guid.New();
             OrderId = orderId;
             Address = address;
             Status = ShipmentStatus.Preparing;
@@ -67,17 +62,15 @@ namespace _01.Domain.Entities.Aggregates.ShipmentAgg
 
         public void Return()
         {
-            if (Status == ShipmentStatus.Delivered)
+            if (Status == ShipmentStatus.Delivered || Status == ShipmentStatus.Shipped)
             {
                 Status = ShipmentStatus.Returned;
                 return;
             }
 
-            if (Status != ShipmentStatus.Shipped)
-                throw new EShopDomainException(
-                    "Only shipped or delivered shipment can be returned.");
+            throw new EShopDomainException(
+                "Only shipped or delivered shipment can be returned.");
 
-            Status = ShipmentStatus.Returned;
         }
     }
 }

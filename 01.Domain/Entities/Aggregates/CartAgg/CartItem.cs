@@ -1,16 +1,12 @@
 ﻿using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.CartAgg
 {
-    public sealed class CartItem : Entity
+    public sealed class CartItem : BaseEntity
     {
-        public Id Id { get; private set; }
 
-        public Id ProductId { get; private set; }
+        public Guid ProductId { get; private set; }
 
         public Quantity Quantity { get; private set; }
 
@@ -18,14 +14,14 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
         {
         }
 
-        internal CartItem(
-            Id productId,
+        public CartItem(
+            Guid productId,
             Quantity quantity)
         {
             ArgumentNullException.ThrowIfNull(productId);
             ArgumentNullException.ThrowIfNull(quantity);
 
-            Id = Id.New();
+            Id = Guid.NewGuid();
             ProductId = productId;
             Quantity = quantity;
         }

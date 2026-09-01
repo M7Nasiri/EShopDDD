@@ -1,17 +1,18 @@
 ﻿using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
+using EShop.Shared.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace _01.Domain.DoamainEvents.Payment
 {
-    public sealed record PaymentSucceededDomainEvent(
-     Id PaymentId,
-     Id OrderId,
-     Money Amount) : IDomainEvent
+    public sealed class PaymentSuccededDomainEvent(
+     Guid paymentId,
+     Guid orderId,
+     Money amount) : BaseDomainEvent
     {
-        public DateTime OccurredOnUtc =>
-            DateTime.UtcNow;
+        public Guid PaymentId { get; private set; } = paymentId;
+        public Guid OrderId { get; private set; } = orderId;
+        public Money Amount { get; private set; } = amount;
     }
 }

@@ -1,6 +1,12 @@
 <Solution>
   <Folder Name="/Shared/">
     <Project Path="EShop.Shared.Abstractions/EShop.Shared.Abstractions.csproj" Id="240d4143-a094-4924-b0b2-af068cfa8d5a" />
+    <Project Path="EShop.Shared.Application/EShop.Shared.Application.csproj" Id="7d338f43-ae17-4917-bbf5-f644b1bba8b3" />
+    <Project Path="EShop.Shared.Domain/EShop.Shared.Domain.csproj" Id="30084e58-2614-4b8e-92f9-9d9d390423f8" />
   </Folder>
   <Project Path="01.Domain/01.Domain.csproj" />
+  <Project Path="02.Application/02.Application.csproj" Id="bddeff17-343b-414f-a218-c4155f2ba531" />
+  <Project Path="EShop.Infrastructure.Identity/EShop.Infrastructure.Identity.csproj" Id="01994450-a4d8-4872-959e-54b4f552292e" />
+  <Project Path="EShop.Infrastructure/EShop.Infrastructure.csproj" Id="1f31c37a-abc5-4a07-ad83-6d9a9841c007" />
+  <Project Path="EShop.WebAPI/EShop.WebAPI.csproj" Id="f371aed6-a986-481c-838a-c2f513a96cde" />
 </Solution>

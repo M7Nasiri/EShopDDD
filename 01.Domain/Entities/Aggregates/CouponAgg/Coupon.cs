@@ -1,6 +1,6 @@
 ﻿using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
+using EShop.Shared.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,13 +9,13 @@ namespace _01.Domain.Entities.Aggregates.CouponAgg
 {
     public sealed class Coupon : AggregateRoot
     {
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
         public string Code { get; private set; }
 
         public int Percent { get; private set; }
 
-        public Id CreatedByUserId { get; private set; }
+        public Guid CreatedByUserId { get; private set; }
 
         public DomainDate StartDate { get; private set; }
 
@@ -32,15 +32,13 @@ namespace _01.Domain.Entities.Aggregates.CouponAgg
         }
 
         public Coupon(
-            Id id,
             string code,
             int percent,
-            Id createdByUserId,
+            Guid createdByUserId,
             DomainDate startDate,
             DomainDate endDate,
             int? usageLimit = null)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(createdByUserId);
             ArgumentNullException.ThrowIfNull(startDate);
             ArgumentNullException.ThrowIfNull(endDate);
@@ -59,7 +57,7 @@ namespace _01.Domain.Entities.Aggregates.CouponAgg
                 throw new EShopDomainException(
                     "Usage limit must be greater than zero.");
 
-            Id = id;
+            Id = Guid.New();
             Code = code.Trim().ToUpperInvariant();
             Percent = percent;
             CreatedByUserId = createdByUserId;
@@ -116,7 +114,6 @@ namespace _01.Domain.Entities.Aggregates.CouponAgg
                 throw new EShopCouponException();
 
             return new AppliedCouponSnapshot(
-                Id,
                 Code,
                 Percent);
         }

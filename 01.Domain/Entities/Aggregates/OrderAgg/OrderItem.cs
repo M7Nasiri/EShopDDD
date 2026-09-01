@@ -1,17 +1,13 @@
 ﻿using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.OrderAgg
 {
-    public sealed class OrderItem : Entity
+    public sealed class OrderItem : BaseEntity
     {
-        public Id Id { get; private set; }
 
-        public Id ProductId { get; private set; }
+        public Guid ProductId { get; private set; }
 
         public Quantity Quantity { get; private set; }
 
@@ -25,7 +21,7 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
         }
 
         internal OrderItem(
-            Id productId,
+            Guid productId,
             Quantity quantity,
             Money unitPrice)
         {
@@ -37,7 +33,7 @@ namespace _01.Domain.Entities.Aggregates.OrderAgg
                 throw new EShopDomainException(
                     "Order item quantity must be at least one.");
 
-            Id = Id.New();
+            Id = Guid.New();
             ProductId = productId;
             Quantity = quantity;
             UnitPrice = unitPrice;

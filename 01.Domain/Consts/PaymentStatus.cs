@@ -6,10 +6,10 @@ namespace _01.Domain.Consts
 {
     public enum PaymentStatus
     {
-        Pending = 0,
-        Processing = 1,
-        Succeeded = 2,
-        Failed = 3,
-        Refunded = 4
+        Pending = 1,
+        Processing = 2,
+        Succeeded = 3,
+        Failed = 4,
+        Refunded = 5
     }
 }

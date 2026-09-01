@@ -2,20 +2,19 @@
 using _01.Domain.Entities.Aggregates.MembershipPlanAgg;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.MembershipAgg
 {
     public sealed class Membership : AggregateRoot
     {
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
-        public Id CustomerId { get; private set; }
+        public Guid CustomerId { get; private set; }
 
-        public Id PlanId { get; private set; }
+        public Guid PlanId { get; private set; }
+        public Name PlanTitle { get; private set; }
+
 
         public int DiscountPercent { get; private set; }
 
@@ -32,12 +31,10 @@ namespace _01.Domain.Entities.Aggregates.MembershipAgg
         }
 
         public Membership(
-            Id id,
-            Id customerId,
+            Guid customerId,
             MembershipPlan plan,
             DomainDate startDate)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(customerId);
             ArgumentNullException.ThrowIfNull(plan);
             ArgumentNullException.ThrowIfNull(startDate);
@@ -46,17 +43,18 @@ namespace _01.Domain.Entities.Aggregates.MembershipAgg
                 throw new EShopDomainException(
                     "Membership plan is inactive.");
 
-            Id = id;
+            Id = Guid.New();
             CustomerId = customerId;
             PlanId = plan.Id;
             DiscountPercent = plan.DiscountPercent;
             FreeShipping = plan.FreeShipping;
             StartDate = startDate;
+            PlanTitle = plan.Name;
 
             EndDate =
                 new DomainDate(
                     startDate.Value.AddDays(
-                        plan.DurationInDays));
+                        plan.DurationInDays.Days));
 
             Status = MembershipStatus.Active;
         }
@@ -84,8 +82,10 @@ namespace _01.Domain.Entities.Aggregates.MembershipAgg
                     "Membership has no discount.");
 
             return new DiscountSnapshot(
-                "Membership",
-                DiscountPercent);
+                PlanTitle.Value,
+                DiscountPercent,
+                FreeShipping)
+                ;
         }
 
         public void Cancel()

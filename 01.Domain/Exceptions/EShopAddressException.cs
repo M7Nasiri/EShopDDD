@@ -1,15 +1,12 @@
-﻿using EShop.Shared.Abstractions.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EShop.Shared.Domain.Exceptions;
 
 namespace _01.Domain.Exceptions
 {
     public class EShopAddressException : EShopException
     {
-        public EShopAddressException(string message= "Address Cannot be empty.") : base(message)
+        public EShopAddressException(string message = "Address Cannot be empty.") : base(message)
         {
-            
+
         }
     }
 }

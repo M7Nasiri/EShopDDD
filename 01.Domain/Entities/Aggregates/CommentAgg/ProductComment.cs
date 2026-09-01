@@ -2,7 +2,7 @@
 using _01.Domain.DoamainEvents.Comment;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
+using EShop.Shared.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,13 +11,13 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
 {
     public sealed class ProductComment : AggregateRoot
     {
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
-        public Id ProductId { get; private set; }
+        public Guid ProductId { get; private set; }
 
-        public Id CustomerId { get; private set; }
+        public Guid CustomerId { get; private set; }
 
-        public Id? ModeratedByUserId { get; private set; }
+        public Guid? ModeratedByUserId { get; private set; }
 
         public string Text { get; private set; }
 
@@ -28,12 +28,10 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
         }
 
         public ProductComment(
-            Id id,
             string text,
-            Id productId,
-            Id customerId)
+            Guid productId,
+            Guid customerId)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(productId);
             ArgumentNullException.ThrowIfNull(customerId);
 
@@ -41,27 +39,43 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
                 throw new EShopDomainException(
                     "Comment text is required.");
 
-            Id = id;
+            Id = Guid.New();
             Text = text.Trim();
             ProductId = productId;
             CustomerId = customerId;
             Status = ProductCommentStatus.Pending;
         }
+        public bool IsOwnedBy(Guid customerId)
+        {
+            ArgumentNullException.ThrowIfNull(customerId);
+
+            return CustomerId == customerId;
+        }
 
         public void EditText(string text)
         {
             if (Status == ProductCommentStatus.Approved)
+            {
                 throw new EShopDomainException(
                     "Approved comment cannot be edited.");
+            }
+
+            if (Status == ProductCommentStatus.Rejected)
+            {
+                throw new EShopDomainException(
+                    "Rejected comment cannot be edited.");
+            }
 
             if (string.IsNullOrWhiteSpace(text))
+            {
                 throw new EShopDomainException(
                     "Comment text is required.");
+            }
 
             Text = text.Trim();
         }
 
-        public void Approve(Id userId)
+        public void Approve(Guid userId)
         {
             ArgumentNullException.ThrowIfNull(userId);
 
@@ -81,7 +95,7 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
                     ProductId));
         }
 
-        public void Reject(Id userId)
+        public void Reject(Guid userId)
         {
             ArgumentNullException.ThrowIfNull(userId);
 
@@ -95,5 +109,6 @@ namespace _01.Domain.Entities.Aggregates.CommentAgg
             ModeratedByUserId = userId;
             Status = ProductCommentStatus.Rejected;
         }
+
     }
 }

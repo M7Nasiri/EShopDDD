@@ -8,7 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EShop.Shared.Abstractions\EShop.Shared.Abstractions.csproj" />
+    <ProjectReference Include="..\EShop.Shared.Domain\EShop.Shared.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\Aggregates\AdminAgg\Services\" />
+    <Folder Include="Entities\Aggregates\CartAgg\Services\" />
+    <Folder Include="Entities\Aggregates\CategoryAgg\Services\" />
+    <Folder Include="Entities\Aggregates\CommentAgg\Services\" />
+    <Folder Include="Entities\Aggregates\CouponAgg\Services\" />
+    <Folder Include="Entities\Aggregates\CustomerAgg\Services\" />
+    <Folder Include="Entities\Aggregates\MembershipAgg\Services\" />
+    <Folder Include="Entities\Aggregates\MembershipPlanAgg\Services\" />
+    <Folder Include="Entities\Aggregates\OrderAgg\Services\" />
+    <Folder Include="Entities\Aggregates\PaymentAgg\Services\" />
+    <Folder Include="Entities\Aggregates\ProductAgg\Services\" />
+    <Folder Include="Entities\Aggregates\ShipmentAgg\Services\" />
   </ItemGroup>
 
 </Project>

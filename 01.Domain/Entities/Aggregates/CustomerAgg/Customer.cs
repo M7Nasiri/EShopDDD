@@ -1,11 +1,6 @@
 ﻿using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Net.Sockets;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.CustomerAgg
 {
@@ -14,7 +9,7 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
     {
         private readonly List<Address> _addresses = new();
 
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
         public Name FullName { get; private set; }
 
@@ -28,7 +23,7 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
         }
 
         public Customer(
-            Id id,
+            Guid id,
             Name fullName)
         {
             ArgumentNullException.ThrowIfNull(id);
@@ -49,40 +44,60 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
         {
             ArgumentNullException.ThrowIfNull(address);
 
-            if (_addresses.Contains(address))
-                throw new EShopDomainException(
-                    "Address already exists.");
-
+            if (_addresses.Any(a => a.PostalCode == address.PostalCode))
+            {
+                throw new EShopDomainException("آدرسی با این عنوان یا کد پستی قبلاً ثبت شده است.");
+            }
             _addresses.Add(address);
 
             if (DefaultAddress is null)
                 DefaultAddress = address;
         }
 
-        public void RemoveAddress(Address address)
+        public void RemoveAddress(string postalCode)
         {
-            ArgumentNullException.ThrowIfNull(address);
+            var target = _addresses.FirstOrDefault(a => a.PostalCode == postalCode);
+            if (target is null)
+                throw new EShopDomainException("آدرس مورد نظر یافت نشد.");
 
-            if (!_addresses.Remove(address))
-                throw new EShopDomainException(
-                    "Address not found.");
+            _addresses.Remove(target);
 
-            if (DefaultAddress == address)
+            if (DefaultAddress == target)
             {
-                DefaultAddress =
-                    _addresses.FirstOrDefault();
+                DefaultAddress = _addresses.FirstOrDefault();
             }
         }
 
-        public void ChangeDefaultAddress(Address address)
+        public void ChangeDefaultAddress(string postalCode)
         {
-            ArgumentNullException.ThrowIfNull(address);
+            var target = _addresses.FirstOrDefault(a => a.PostalCode == postalCode);
+            if (target is null)
+                throw new EShopDomainException("آدرس انتخاب شده در لیست آدرس‌های شما وجود ندارد.");
 
-            if (!_addresses.Contains(address))
-                throw new EShopAddressException(
-                    "Address must belong to customer.");
+            DefaultAddress = target;
+        }
+        public void EditAddress(string postalCode, Address updatedAddress)
+        {
+            ArgumentNullException.ThrowIfNull(updatedAddress);
 
-            DefaultAddress = address;
+            var existing = _addresses.FirstOrDefault(a => a.PostalCode == postalCode);
+            if (existing is null)
+                throw new EShopDomainException("آدرس مورد نظر جهت ویرایش یافت نشد.");
+
+
+            if (_addresses.Any(a => a.PostalCode != postalCode &&
+                                   (a.PostalCode == updatedAddress.PostalCode)))
+            {
+                throw new EShopDomainException("آدرس دیگری با این عنوان یا کد پستی از قبل وجود دارد.");
+            }
+
+            var index = _addresses.IndexOf(existing);
+            _addresses[index] = updatedAddress;
+
+            if (DefaultAddress == existing)
+            {
+                DefaultAddress = updatedAddress;
+            }
         }
     }
 }

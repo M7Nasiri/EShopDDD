@@ -1,7 +1,4 @@
-﻿using EShop.Shared.Abstractions.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EShop.Shared.Domain.Exceptions;
 
 namespace _01.Domain.Exceptions
 {
@@ -9,7 +6,7 @@ namespace _01.Domain.Exceptions
     {
         public EShopFullNameException() : base("Full Name Cannot be empty")
         {
-            
+
         }
     }
 }

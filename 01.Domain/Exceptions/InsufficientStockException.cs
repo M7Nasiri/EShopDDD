@@ -8,14 +8,14 @@ namespace _01.Domain.Exceptions
     public sealed class InsufficientStockException
      : EShopDomainException
     {
-        public Id ProductId { get; }
+        public Guid ProductId { get; }
 
         public int Available { get; }
 
         public int Requested { get; }
 
         public InsufficientStockException(
-            Id productId,
+            Guid productId,
             int available,
             int requested)
             : base(

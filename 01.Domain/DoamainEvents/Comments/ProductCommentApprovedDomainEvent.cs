@@ -1,16 +1,20 @@
 ﻿using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.DoamainEvents.Comment
 {
-    public sealed record ProductCommentApprovedDomainEvent(
-    Id CommentId,
-    Id ProductId) : IDomainEvent
+   
+    public sealed class ProductCommentApprovedDomainEvent : BaseDomainEvent
     {
-        public DateTime OccurredOnUtc =>
-            DateTime.UtcNow;
+        public Guid CommentId { get; private set; }
+        public Guid ProductId { get; private set; }
+
+        public ProductCommentApprovedDomainEvent(Guid commentId, Guid productId)
+        {
+            CommentId = commentId;
+            ProductId = productId;
+        }
+
+
     }
 }

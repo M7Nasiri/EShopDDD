@@ -1,10 +1,7 @@
 ﻿using _01.Domain.DoamainEvents.Products;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
-using EShop.Shared.Abstractions.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.Entities.Aggregates.ProductAgg
 {
@@ -13,7 +10,7 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
     {
         private readonly List<ProductAttribute> _attributes = new();
 
-        public Id Id { get; private set; }
+        public Guid Id { get; private set; }
 
         public Name Name { get; private set; }
 
@@ -23,10 +20,11 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
 
         public Money UnitPrice { get; private set; }
 
-        public Id CategoryId { get; private set; }
+        public Guid CategoryId { get; private set; }
 
-        public Id CreatedByUserId { get; private set; }
-
+        public Guid CreatedByUserId { get; private set; }
+        public List<ProductImage> Images { get; private set; }
+        public Name ImageName { get; private set; }
         public IReadOnlyCollection<ProductAttribute> Attributes =>
             _attributes.AsReadOnly();
 
@@ -35,15 +33,13 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
         }
 
         public Product(
-            Id id,
             Name name,
             Description description,
             Quantity stock,
             Money unitPrice,
-            Id categoryId,
-            Id createdByUserId)
+            Guid categoryId,
+            Guid createdByUserId)
         {
-            ArgumentNullException.ThrowIfNull(id);
             ArgumentNullException.ThrowIfNull(name);
             ArgumentNullException.ThrowIfNull(description);
             ArgumentNullException.ThrowIfNull(stock);
@@ -51,7 +47,7 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
             ArgumentNullException.ThrowIfNull(categoryId);
             ArgumentNullException.ThrowIfNull(createdByUserId);
 
-            Id = id;
+            Id = Guid.New();
             Name = name;
             Description = description;
             Stock = stock;
@@ -81,7 +77,7 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
             Description = description;
         }
 
-        public void ChangeCategory(Id categoryId)
+        public void ChangeCategory(Guid categoryId)
         {
             ArgumentNullException.ThrowIfNull(categoryId);
 
@@ -197,5 +193,29 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
             _attributes.Remove(oldAttribute);
             _attributes.Add(newAttribute);
         }
+
+        public void SetProductImage(string imageName)
+        {
+            ArgumentNullException.ThrowIfNull(imageName);
+            ImageName = new Name(imageName);
+        }
+
+        public void AddImage(ProductImage image)
+        {
+            image.ProductId = Id;
+            Images.Add(image);
+        }
+
+        public string RemoveImage(System.Guid id)
+        {
+            var image = Images.FirstOrDefault(f => f.Id.Value == id);
+            if (image == null)
+                throw new EShopNullException("عکس یافت نشد");
+
+            Images.Remove(image);
+            return image.ImageName.Value;
+        }
+
+
     }
 }
