@@ -2,7 +2,7 @@
 
 namespace _01.Domain.ValueObjects
 {
-    public record Weight
+    public sealed record Weight
     {
         public static Weight Zero => new(0);
 
@@ -12,7 +12,7 @@ namespace _01.Domain.ValueObjects
         {
             if (kg < 0)
                 throw new EShopWeightException();
-            Kg = kg;
+            Kg = Math.Round(kg, 3);
         }
 
         public Weight Multiply(int count) => new(Kg * count);
@@ -21,7 +21,8 @@ namespace _01.Domain.ValueObjects
 
         public static bool operator >(Weight a, Weight b) => a.Kg > b.Kg;
         public static bool operator <(Weight a, Weight b) => a.Kg < b.Kg;
-
+        public static bool operator >=(Weight a, Weight b) => a.Kg >= b.Kg;
+        public static bool operator <=(Weight a, Weight b) => a.Kg <= b.Kg;
         public override string ToString() => $"{Kg:N2} kg";
     }
 

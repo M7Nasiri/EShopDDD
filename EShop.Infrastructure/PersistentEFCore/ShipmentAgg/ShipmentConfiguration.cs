@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
 {
-    internal class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
+    public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
     {
         public void Configure(EntityTypeBuilder<Shipment> builder)
         {
@@ -12,6 +12,7 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
 
             // ۱. کلید اصلی
             builder.HasKey(s => s.Id);
+
             builder.Property(s => s.Id)
                 .ValueGeneratedNever();
 
@@ -23,11 +24,13 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
             builder.Property(s => s.Status)
                 .HasConversion<string>()
                 .HasMaxLength(50)
+                .IsUnicode(false)
                 .IsRequired();
 
             // ۴. کد رهگیری پستی
             builder.Property(s => s.TrackingCode)
                 .HasMaxLength(100)
+                .IsUnicode(false)
                 .IsRequired(false);
 
             builder.OwnsOne(s => s.Address, addressBuilder =>
@@ -60,23 +63,24 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
 
                 addressBuilder.Property(a => a.Street)
                     .HasColumnName("Street")
-                    .HasMaxLength(100)
+                    .HasMaxLength(300)
                     .IsRequired();
 
                 addressBuilder.Property(a => a.PostalCode)
                     .HasColumnName("PostalCode")
                     .HasMaxLength(20)
-                    .IsRequired();
+                    .IsRequired()
+                    .IsUnicode(false);
 
                 addressBuilder.Property(a => a.Plaque)
                     .HasColumnName("Plaque")
-                    .HasMaxLength(20)
+                    .HasMaxLength(50)
                     .IsRequired();
 
             });
 
             builder.HasIndex(s => s.OrderId).IsUnique();
-            builder.HasIndex(s => s.TrackingCode);
+            builder.HasIndex(s => s.TrackingCode).HasFilter("[TrackingCode] IS NOT NULL");
             builder.HasIndex(s => s.Status);
         }
     }

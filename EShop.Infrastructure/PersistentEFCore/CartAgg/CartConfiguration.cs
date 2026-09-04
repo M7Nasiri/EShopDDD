@@ -1,4 +1,5 @@
 ﻿using _01.Domain.Entities.Aggregates.CartAgg;
+using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,7 +13,7 @@ namespace EShop.Infrastructure.PersistentEFCore.CartAgg
 
             // Primary Key با تبدیل Value Object شناسه
             builder.HasKey(c => c.Id);
-            builder.Property(c => c.Id);
+            builder.Property(c => c.Id).ValueGeneratedNever();
 
             // شناسه کاربر (اختیاری برای کاربر ثبت‌نام کرده)
             builder.Property(c => c.CustomerId)
@@ -30,28 +31,27 @@ namespace EShop.Infrastructure.PersistentEFCore.CartAgg
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             // رابطه یک به چند با CartItem و حذف آبشاری
-            builder.OwnsMany(c => c.Items, options =>
+            builder.OwnsMany(c => c.Items, item =>
             {
-                options.ToTable("CartItems");
+                item.ToTable("CartItems");
+                item.WithOwner().HasForeignKey("CartId");
 
-                options.HasKey(ci => ci.Id);
-                options.Property(ci => ci.Id);
+                item.HasKey(ci => ci.Id);
+                item.Property(ci => ci.Id).ValueGeneratedNever(); ;
 
                 // کلید خارجی مرجع کالا
-                options.Property(ci => ci.ProductId)
+                item.Property(ci => ci.ProductId)
                     .IsRequired();
 
                 // نگاشت Value Object تعداد (Quantity)
-                options.OwnsOne(ci => ci.Quantity, q =>
-                {
-                    q.Property(x => x.Value)
-                        .HasColumnName("Quantity")
-                        .IsRequired();
-                });
+                item.Property(ci => ci.Quantity)
+                   .HasConversion(q => q.Value, v => new Quantity(v))
+                   .HasColumnName("Quantity")
+                   .IsRequired();
 
                 // ایندکس ترکیبی یونیک روی (CartId, ProductId)
                 // این ایندکس تضمین می‌کند که یک کالا دو بار در جدول به صورت ردیف مجزا برای یک سبد ثبت نشود
-                options.HasIndex("CartId", nameof(CartItem.ProductId))
+                item.HasIndex("CartId", nameof(CartItem.ProductId))
                     .IsUnique();
             });
 

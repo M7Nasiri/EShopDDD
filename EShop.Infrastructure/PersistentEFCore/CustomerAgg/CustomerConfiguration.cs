@@ -23,15 +23,10 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
                 .HasMaxLength(200)
                 .IsRequired();
 
+            builder.Navigation(c => c.Addresses)
+               .HasField("_addresses")
+               .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            //// ۳. نگاشت Value Object نام (Name)
-            //builder.OwnsOne(c => c.FullName, name =>
-            //{
-            //    name.Property(n => n.Value)
-            //        .HasColumnName("FullName")  // نام ستون در جدول Customers
-            //        .HasMaxLength(200)
-            //        .IsRequired();
-            //});
 
             // ۴. نگاشت لیست آدرس‌ها (Owned Collection)
             builder.OwnsMany(c => c.Addresses, a =>
@@ -39,7 +34,7 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
                 a.ToTable("CustomerAddresses");              // جدول مجزا برای آدرس‌ها
                 a.WithOwner().HasForeignKey("CustomerId");   // کلید خارجی به مشتری
 
-                a.Property<int>("Id");                       // کلید اصلی مخفی (Shadow PK)
+                a.Property<int>("Id").ValueGeneratedOnAdd();                       // کلید اصلی مخفی (Shadow PK)
                 a.HasKey("Id");
 
                 a.Property(a => a.ReceiverName)
@@ -65,12 +60,12 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
                 da.Property(x => x.ReceiverName)
              .HasColumnName("Default_ReceiverName")
              .HasMaxLength(150)
-             .IsRequired();
+             .IsRequired(false);
 
                 da.Property(x => x.PhoneNumber)
                     .HasColumnName("Default_PhoneNumber")
                     .HasMaxLength(20)
-                    .IsRequired();
+                    .IsRequired(false);
                 da.Property(x => x.Title).HasColumnName("Default_Title").HasMaxLength(100);
                 da.Property(x => x.Province).HasColumnName("Default_Province").HasMaxLength(100);
                 da.Property(x => x.City).HasColumnName("Default_City").HasMaxLength(100);
@@ -79,9 +74,6 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
                 da.Property(x => x.PostalCode).HasColumnName("Default_PostalCode").HasMaxLength(10);
             });
 
-            // ۶. دسترسی مستقیم به فیلد پشتیبان (_addresses)
-            builder.Navigation(c => c.Addresses)
-                .UsePropertyAccessMode(PropertyAccessMode.Field);
         }
     }
 }

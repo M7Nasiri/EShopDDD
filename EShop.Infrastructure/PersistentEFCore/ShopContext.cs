@@ -10,8 +10,10 @@ using _01.Domain.Entities.Aggregates.OrderAgg;
 using _01.Domain.Entities.Aggregates.PaymentAgg;
 using _01.Domain.Entities.Aggregates.ProductAgg;
 using _01.Domain.Entities.Aggregates.ShipmentAgg;
+using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -71,6 +73,47 @@ namespace EShop.Infrastructure.PersistentEFCore
             optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             base.OnConfiguring(optionsBuilder);
             
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+
+            configurationBuilder.Properties<Money>()
+                .HaveConversion<MoneyConverter>();
+
+            configurationBuilder.Properties<Quantity>()
+                .HaveConversion<QuantityConverter>();
+
+            configurationBuilder.Properties<Name>()
+                .HaveConversion<NameConverter>();
+
+            configurationBuilder.Properties<DomainDate>()
+                .HaveConversion<DomainDateConverter>();
+
+            configurationBuilder.Properties<Weight>()
+                .HaveConversion<WeightConverter>();
+        }
+
+        public class MoneyConverter : ValueConverter<Money, decimal>
+        {
+            public MoneyConverter() : base(m => m.Amount, v => new Money(v)) { }
+        }
+        public class QuantityConverter : ValueConverter<Quantity, int>
+        {
+            public QuantityConverter() : base(m => m.Value, v => new Quantity(v)) { }
+        }
+        public class NameConverter : ValueConverter<Name, string>
+        {
+            public NameConverter() : base(m => m.Value, v => new Name(v)) { }
+        }
+        public class DomainDateConverter : ValueConverter<DomainDate, DateTime>
+        {
+            public DomainDateConverter() : base(m => m.Value, v => new DomainDate(v)) { }
+        }
+        public class WeightConverter : ValueConverter<Weight, double>
+        {
+            public WeightConverter() : base(m => m.Kg, v => new Weight(v)) { }
         }
     }
 }

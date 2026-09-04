@@ -1,4 +1,5 @@
 ﻿using _01.Domain.Entities.Aggregates.AdminAgg;
+using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,16 +12,14 @@ namespace EShop.Infrastructure.PersistentEFCore.AdminAgg
             builder.ToTable("Admins");
 
             builder.HasKey(c => c.Id);
-            builder.Property(c => c.Id);
+            builder.Property(c => c.Id).ValueGeneratedNever();
 
 
-            builder.OwnsOne(x => x.FullName, name =>
-            {
-                name.Property(x => x.Value)
-                    .HasColumnName("FullName")
-                    .HasMaxLength(300)
-                    .IsRequired();
-            });
+            builder.Property(x => x.FullName)
+            .HasConversion(n => n.Value, v => new Name(v))
+            .HasColumnName("FullName")
+            .HasMaxLength(200)
+            .IsRequired();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
 
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Id);
+            builder.Property(p => p.Id).ValueGeneratedNever();
 
 
             builder.Property(p => p.Name)
@@ -30,22 +30,25 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
                 .HasConversion(stock => stock.Value, value => new Quantity(value))
                 .IsRequired();
 
-            // کانفیگ Value Object پول (واحد و مقدار)
-            builder.OwnsOne(p => p.UnitPrice, money =>
-            {
-                money.Property(m => m.Amount)
-                    .HasColumnName("UnitPrice_Amount")
-                    .HasPrecision(18, 2)
-                    .IsRequired();
-            });
+
+            builder.Property(p => p.UnitPrice)
+                      .HasConversion(m => m.Amount, v => new Money(v))
+                      .HasColumnName("UnitPrice")
+                      .HasPrecision(18, 2)
+                      .IsRequired();
 
             builder.Property(p => p.CategoryId)
                 .IsRequired();
 
             builder.Property(p => p.CreatedByUserId)
                 .IsRequired();
+         
 
-            // نگاشت کالکشن خصوصیات (Attributes)
+            builder.Navigation(p => p.Attributes)
+            .HasField("_attributes")
+            .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+
             builder.OwnsMany(p => p.Attributes, attr =>
             {
                 attr.ToTable("ProductAttributes");
@@ -56,6 +59,8 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
                 attr.Property(a => a.Key).HasMaxLength(100).IsRequired();
                 attr.Property(a => a.Value).HasMaxLength(500).IsRequired();
             });
+
+
 
             builder.Property(p => p.ImageName)
                .HasConversion(
@@ -69,7 +74,6 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
             builder.OwnsMany(p => p.Images, img =>
             {
                 img.ToTable("ProductImages");
-
                 img.WithOwner().HasForeignKey("ProductId");
 
                 img.HasKey(i => i.Id);
@@ -87,10 +91,6 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
                 img.HasIndex("ProductId", nameof(ProductImage.Sequence));
             });
 
-
-            // دسترسی مستقیم EF به فیلد خصوصی _attributes
-            builder.Metadata.FindNavigation(nameof(Product.Attributes))!
-                .SetPropertyAccessMode(PropertyAccessMode.Field);
 
             builder.HasIndex(p => p.CategoryId);
             builder.HasIndex(p => p.Name);

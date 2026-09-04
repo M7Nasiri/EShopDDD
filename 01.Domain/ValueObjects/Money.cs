@@ -52,7 +52,7 @@ namespace _01.Domain.ValueObjects
         public Money ApplyPercentageDiscount(int percent)
         {
             if (percent is < 0 or > 100)
-                throw new EShopCouponException();
+                throw new EShopDomainException("درصد باید عددی بین 1 تا 100 باشد .");
 
             var discount =
                 decimal.Round(
@@ -66,7 +66,7 @@ namespace _01.Domain.ValueObjects
         public static explicit operator decimal(Money money)
         {
             ArgumentNullException.ThrowIfNull(money);
-            return money.Amount;
+            return money?.Amount??0m;
         }
 
         public static explicit operator Money(decimal amount) =>
