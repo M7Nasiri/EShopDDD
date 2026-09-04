@@ -23,7 +23,7 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
         public Guid CategoryId { get; private set; }
 
         public Guid CreatedByUserId { get; private set; }
-        public List<ProductImage> Images { get; private set; }
+        public List<ProductImage> Images { get; private set; } = new();
         public Name ImageName { get; private set; }
         public IReadOnlyCollection<ProductAttribute> Attributes =>
             _attributes.AsReadOnly();

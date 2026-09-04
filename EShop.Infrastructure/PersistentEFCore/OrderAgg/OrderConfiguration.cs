@@ -1,10 +1,6 @@
 ﻿using _01.Domain.Entities.Aggregates.OrderAgg;
-using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore.OrderAgg
 {
@@ -101,6 +97,13 @@ namespace EShop.Infrastructure.PersistentEFCore.OrderAgg
                 });
             });
 
+            builder.OwnsOne(o => o.BaseShippingCost, option =>
+            {
+                option.Property(option => option.Amount)
+                    .HasColumnName("BaseShippingCost")
+                    .HasPrecision(18, 2)
+                    .IsRequired();
+            });
 
             builder.Navigation(o => o.Items)
                 .UsePropertyAccessMode(PropertyAccessMode.Field);

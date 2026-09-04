@@ -2,9 +2,6 @@
 using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
 {
@@ -15,18 +12,26 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
             // ۱. نام جدول اصلی
             builder.ToTable("Customers");
 
-            // ۲. کلید اصلی (Primary Key) و تبدیل Strongly-Typed Id
-            builder.HasKey(c => c.Id);
-            builder.Property(c => c.Id);
 
-            // ۳. نگاشت Value Object نام (Name)
-            builder.OwnsOne(c => c.FullName, name =>
-            {
-                name.Property(n => n.Value)
-                    .HasColumnName("FullName")  // نام ستون در جدول Customers
-                    .HasMaxLength(200)
-                    .IsRequired();
-            });
+            builder.HasKey(c => c.Id);
+            builder.Property(c => c.Id).ValueGeneratedNever();
+
+
+            builder.Property(c => c.FullName)
+                .HasConversion(n => n.Value, v => new Name(v))
+                .HasColumnName("FullName")
+                .HasMaxLength(200)
+                .IsRequired();
+
+
+            //// ۳. نگاشت Value Object نام (Name)
+            //builder.OwnsOne(c => c.FullName, name =>
+            //{
+            //    name.Property(n => n.Value)
+            //        .HasColumnName("FullName")  // نام ستون در جدول Customers
+            //        .HasMaxLength(200)
+            //        .IsRequired();
+            //});
 
             // ۴. نگاشت لیست آدرس‌ها (Owned Collection)
             builder.OwnsMany(c => c.Addresses, a =>
@@ -57,6 +62,15 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
             // ۵. نگاشت آدرس پیش‌فرض (Owned Entity تکی)
             builder.OwnsOne(c => c.DefaultAddress, da =>
             {
+                da.Property(x => x.ReceiverName)
+             .HasColumnName("Default_ReceiverName")
+             .HasMaxLength(150)
+             .IsRequired();
+
+                da.Property(x => x.PhoneNumber)
+                    .HasColumnName("Default_PhoneNumber")
+                    .HasMaxLength(20)
+                    .IsRequired();
                 da.Property(x => x.Title).HasColumnName("Default_Title").HasMaxLength(100);
                 da.Property(x => x.Province).HasColumnName("Default_Province").HasMaxLength(100);
                 da.Property(x => x.City).HasColumnName("Default_City").HasMaxLength(100);

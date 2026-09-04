@@ -4,8 +4,9 @@ using EShop.Infrastructure.Identity.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Security.Claims;
+using EShop.Infrastructure;
 using System.Text;
+using EShop.Shared.Application;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,8 +18,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddIdentityInfrastructure(
-    builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddIdentityInfrastructure(builder.Configuration);
+builder.Services.Init();
 
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)

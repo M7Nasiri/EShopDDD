@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore
@@ -43,29 +44,26 @@ namespace EShop.Infrastructure.PersistentEFCore
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ShopContext).Assembly);
+           
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                if (!typeof(BaseEntity).IsAssignableFrom(entityType.ClrType))
+                // الف) نباید Owned باشد (حل خطای فعلی)
+                if (entityType.IsOwned())
                     continue;
 
-                var parameter = Expression.Parameter(
-                    entityType.ClrType,
-                    "e");
+                // ب) باید از نوع AggregateRoot (یا اگر ترجیح می‌دهید BaseEntity غیر Owned) باشد
+                if (!typeof(AggregateRoot).IsAssignableFrom(entityType.ClrType))
+                    continue;
 
-                var isDeleteProperty = Expression.Property(
-                    parameter,
-                    nameof(BaseEntity.IsDelete));
+                var parameter = Expression.Parameter(entityType.ClrType, "e");
+                var isDeleteProperty = Expression.Property(parameter, nameof(BaseEntity.IsDelete));
+                var notDeletedExpression = Expression.Equal(isDeleteProperty, Expression.Constant(false));
 
-                var notDeletedExpression = Expression.Equal(
-                    isDeleteProperty,
-                    Expression.Constant(false));
-
-                var lambda = Expression.Lambda(
-                    notDeletedExpression,
-                    parameter);
-
+                var lambda = Expression.Lambda(notDeletedExpression, parameter);
                 entityType.SetQueryFilter(lambda);
             }
+
+
             base.OnModelCreating(modelBuilder);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

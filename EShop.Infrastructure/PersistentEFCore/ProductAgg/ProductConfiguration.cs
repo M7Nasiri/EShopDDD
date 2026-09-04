@@ -2,9 +2,6 @@
 using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
 {
@@ -39,7 +36,7 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
                 money.Property(m => m.Amount)
                     .HasColumnName("UnitPrice_Amount")
                     .HasPrecision(18, 2)
-                    .IsRequired();              
+                    .IsRequired();
             });
 
             builder.Property(p => p.CategoryId)
@@ -52,20 +49,42 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
             builder.OwnsMany(p => p.Attributes, attr =>
             {
                 attr.ToTable("ProductAttributes");
-                //attr.WithOwner().HasForeignKey("ProductId");
-                //attr.Property<int>("Id").ValueGeneratedOnAdd();
-                //attr.HasKey("Id");
+                attr.WithOwner().HasForeignKey("ProductId");
+                attr.Property<int>("Id").ValueGeneratedOnAdd();
+                attr.HasKey("Id");
 
                 attr.Property(a => a.Key).HasMaxLength(100).IsRequired();
                 attr.Property(a => a.Value).HasMaxLength(500).IsRequired();
             });
 
-            builder.OwnsMany(b => b.Images, option =>
+            builder.Property(p => p.ImageName)
+               .HasConversion(
+                   img => img != null ? img.Value : null,
+                   str => !string.IsNullOrEmpty(str) ? new Name(str) : null)
+               .HasMaxLength(200)
+               .IsRequired(false);
+
+
+
+            builder.OwnsMany(p => p.Images, img =>
             {
-                option.ToTable("Images");
-                option.Property(b => b.ImageName)
-                    .IsRequired()
-                    .HasMaxLength(100);
+                img.ToTable("ProductImages");
+
+                img.WithOwner().HasForeignKey("ProductId");
+
+                img.HasKey(i => i.Id);
+                img.Property(i => i.Id).ValueGeneratedNever();
+
+
+
+                img.Property(i => i.ImageName)
+                    .HasConversion(n => n.Value, v => new Name(v))
+                    .HasMaxLength(200)
+                    .IsRequired();
+
+                img.Property(i => i.Sequence).IsRequired();
+
+                img.HasIndex("ProductId", nameof(ProductImage.Sequence));
             });
 
 

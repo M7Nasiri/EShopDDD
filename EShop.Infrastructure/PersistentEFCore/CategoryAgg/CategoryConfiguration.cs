@@ -1,10 +1,6 @@
 ﻿using _01.Domain.Entities.Aggregates.CategoryAgg;
-using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore.CategoryAgg
 {

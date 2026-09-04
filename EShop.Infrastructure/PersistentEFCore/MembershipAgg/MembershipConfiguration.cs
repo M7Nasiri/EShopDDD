@@ -2,20 +2,19 @@
 using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore.MembershipAgg
 {
     public class MembershipConfiguration : IEntityTypeConfiguration<Membership>
     {
+
         public void Configure(EntityTypeBuilder<Membership> builder)
         {
             builder.ToTable("Memberships");
 
             builder.HasKey(m => m.Id);
-            builder.Property(m => m.Id);
+            builder.Property(m => m.Id)
+                .ValueGeneratedNever();
 
             builder.Property(m => m.CustomerId)
                 .IsRequired();
@@ -29,35 +28,43 @@ namespace EShop.Infrastructure.PersistentEFCore.MembershipAgg
             builder.Property(m => m.FreeShipping)
                 .IsRequired();
 
-            builder.Property(m => m.PlanTitle)
-           .HasMaxLength(150)
-           .IsRequired();
-
-            // نگاشت DomainDate (Value Object)
-            builder.OwnsOne(m => m.StartDate, date =>
+            builder.OwnsOne(m => m.PlanTitle, name =>
             {
-                date.Property(d => d.Value)
-                    .HasColumnName("StartDate")
-                    .IsRequired();
+                name.Property(x => x.Value)
+                .HasMaxLength(150).
+                IsRequired();
             });
 
-            builder.OwnsOne(m => m.EndDate, date =>
-            {
-                date.Property(d => d.Value)
-                    .HasColumnName("EndDate")
-                    .IsRequired();
-            });
 
+            // ۱. نگاشت StartDate با Conversion
+            builder.Property(m => m.StartDate)
+                .HasConversion(
+                    d => d.Value,
+                    v => new DomainDate(v))
+                .HasColumnName("StartDate")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            // ۲. نگاشت EndDate با Conversion
+            builder.Property(m => m.EndDate)
+                .HasConversion(
+                    d => d.Value,
+                    v => new DomainDate(v))
+                .HasColumnName("EndDate")
+                .HasColumnType("datetime2")
+                .IsRequired();
+
+            // ۳. وضعیت
             builder.Property(m => m.Status)
                 .HasConversion<string>()
                 .HasMaxLength(50)
                 .IsRequired();
 
-            // ایندکس جهت بالا رفتن سرعت کوئری‌های بررسی اشتراک کاربر
+            // ۴. ایندکس‌ها
             builder.HasIndex(m => new { m.CustomerId, m.Status });
 
-            builder.HasIndex(m => new { m.Status, m.EndDate.Value })
-           .HasFilter("[Status] = 1"); // 1 = Active
+            builder.HasIndex(m => new { m.Status, m.EndDate })
+                .HasFilter("[Status] = 'Active'");
         }
     }
 }

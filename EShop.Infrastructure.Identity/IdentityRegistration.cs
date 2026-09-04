@@ -58,11 +58,6 @@ namespace EShop.Infrastructure.Identity
                 .AddSignInManager<SignInManager<AppUser>>()
                 .AddDefaultTokenProviders();
 
-
-
-
-
-
             services.AddHttpContextAccessor();
 
             services.AddScoped<ICurrentUser, CurrentUser>();

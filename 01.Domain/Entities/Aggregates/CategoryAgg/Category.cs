@@ -1,9 +1,6 @@
 ﻿using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace _01.Domain.Entities.Aggregates.CategoryAgg
 {
@@ -19,14 +16,14 @@ namespace _01.Domain.Entities.Aggregates.CategoryAgg
         {
         }
 
-       
+
         public Category(
            Name name,
            Guid? parentCategoryId = null)
         {
             ArgumentNullException.ThrowIfNull(name);
 
-            Id = Guid.NewGuid();;
+            Id = Guid.NewGuid(); ;
 
             ValidateParent(Id, parentCategoryId);
 
@@ -41,7 +38,7 @@ namespace _01.Domain.Entities.Aggregates.CategoryAgg
             return new Category(name, parentCategoryId);
         }
 
-      
+
 
         public void EnsureCanBeDeleted(bool hasChildren, bool hasProducts)
         {

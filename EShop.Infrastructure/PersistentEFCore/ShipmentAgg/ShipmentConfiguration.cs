@@ -1,10 +1,6 @@
 ﻿using _01.Domain.Entities.Aggregates.ShipmentAgg;
-using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
 {
@@ -12,7 +8,7 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
     {
         public void Configure(EntityTypeBuilder<Shipment> builder)
         {
-            builder.ToTable("Shipments", "dbo");
+            builder.ToTable("Shipments");
 
             // ۱. کلید اصلی
             builder.HasKey(s => s.Id);
@@ -36,17 +32,17 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
 
             builder.OwnsOne(s => s.Address, addressBuilder =>
             {
+                addressBuilder.Property(a => a.Title)
+                   .HasColumnName("Title")
+                   .HasMaxLength(100)
+                   .IsRequired(false);
+
                 addressBuilder.Property(a => a.ReceiverName)
                     .HasColumnName("ReceiverName")
                     .HasMaxLength(150)
                     .IsRequired();
 
                 addressBuilder.Property(a => a.PhoneNumber)
-                    .HasColumnName("PhoneNumber")
-                    .HasMaxLength(20)
-                    .IsRequired();
-
-                addressBuilder.Property(a => a.Title)
                     .HasColumnName("PhoneNumber")
                     .HasMaxLength(20)
                     .IsRequired();

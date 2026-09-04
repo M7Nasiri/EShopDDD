@@ -1,8 +1,4 @@
 ﻿using _01.Domain.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace _01.Domain.ValueObjects
 {
     public sealed record Address

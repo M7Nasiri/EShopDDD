@@ -1,9 +1,6 @@
 ﻿using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace _01.Domain.Entities.Aggregates.CouponAgg
 {

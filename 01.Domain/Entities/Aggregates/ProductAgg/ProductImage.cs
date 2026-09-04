@@ -1,9 +1,5 @@
-﻿using _01.Domain.Entities.Aggregates.CustomerAgg;
-using _01.Domain.ValueObjects;
+﻿using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace _01.Domain.Entities.Aggregates.ProductAgg
 {
@@ -12,7 +8,7 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
         public ProductImage(Name imageName, int sequence)
         {
             ArgumentNullException.ThrowIfNull(imageName);
-
+            Id = Guid.NewGuid();
             ImageName = imageName;
             Sequence = sequence;
         }

@@ -1,10 +1,6 @@
 ﻿using _01.Domain.Entities.Aggregates.CartAgg;
-using _01.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EShop.Infrastructure.PersistentEFCore.CartAgg
 {
@@ -46,15 +42,19 @@ namespace EShop.Infrastructure.PersistentEFCore.CartAgg
                     .IsRequired();
 
                 // نگاشت Value Object تعداد (Quantity)
-                options.Property(ci => ci.Quantity)
-                    .IsRequired();
+                options.OwnsOne(ci => ci.Quantity, q =>
+                {
+                    q.Property(x => x.Value)
+                        .HasColumnName("Quantity")
+                        .IsRequired();
+                });
 
                 // ایندکس ترکیبی یونیک روی (CartId, ProductId)
                 // این ایندکس تضمین می‌کند که یک کالا دو بار در جدول به صورت ردیف مجزا برای یک سبد ثبت نشود
                 options.HasIndex("CartId", nameof(CartItem.ProductId))
                     .IsUnique();
             });
-                
+
 
             // ایندکس‌ها برای تسریع در واکشی سبد خرید
             builder.HasIndex(c => c.CustomerId)
