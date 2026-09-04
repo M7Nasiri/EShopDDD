@@ -23,7 +23,11 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
         public Guid CategoryId { get; private set; }
 
         public Guid CreatedByUserId { get; private set; }
-        public List<ProductImage> Images { get; private set; } = new();
+        private readonly List<ProductImage> _images = new();
+
+        public IReadOnlyCollection<ProductImage> Images =>
+            _images.AsReadOnly();
+
         public Name ImageName { get; private set; }
         public IReadOnlyCollection<ProductAttribute> Attributes =>
             _attributes.AsReadOnly();
@@ -197,19 +201,33 @@ namespace _01.Domain.Entities.Aggregates.ProductAgg
             ImageName = new Name(imageName);
         }
 
+
+
         public void AddImage(ProductImage image)
         {
-            image.ProductId = Id;
-            Images.Add(image);
+            ArgumentNullException.ThrowIfNull(image);
+
+            if (_images.Any(x => x.Id == image.Id))
+                throw new EShopDomainException(
+                    "The product image already exists.");
+
+            if (_images.Any(x => x.Sequence == image.Sequence))
+                throw new EShopDomainException(
+                    $"Image sequence '{image.Sequence}' already exists.");
+
+            image.AssignToProduct(Id);
+            _images.Add(image);
         }
 
-        public string RemoveImage(System.Guid id)
+        public string RemoveImage(Guid id)
         {
-            var image = Images.FirstOrDefault(f => f.Id == id);
-            if (image == null)
+            var image = _images.FirstOrDefault(x => x.Id == id);
+
+            if (image is null)
                 throw new EShopNullException("عکس یافت نشد");
 
-            Images.Remove(image);
+            _images.Remove(image);
+
             return image.ImageName.Value;
         }
 

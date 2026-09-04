@@ -44,23 +44,6 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
                 .IsRequired();
          
 
-            builder.Navigation(p => p.Attributes)
-            .HasField("_attributes")
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
-
-
-            builder.OwnsMany(p => p.Attributes, attr =>
-            {
-                attr.ToTable("ProductAttributes");
-                attr.WithOwner().HasForeignKey("ProductId");
-                attr.Property<int>("Id").ValueGeneratedOnAdd();
-                attr.HasKey("Id");
-
-                attr.Property(a => a.Key).HasMaxLength(100).IsRequired();
-                attr.Property(a => a.Value).HasMaxLength(500).IsRequired();
-            });
-
-
 
             builder.Property(p => p.ImageName)
                .HasConversion(
@@ -70,30 +53,70 @@ namespace EShop.Infrastructure.PersistentEFCore.ProductAgg
                .IsRequired(false);
 
 
+            builder.HasIndex(p => p.CategoryId);
+            builder.HasIndex(p => p.Name);
+
+
+            builder.Navigation(p => p.Attributes)
+                .HasField("_attributes")
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            builder.OwnsMany(p => p.Attributes, attr =>
+            {
+                attr.ToTable("ProductAttributes");
+
+                attr.WithOwner()
+                    .HasForeignKey("ProductId");
+
+                attr.Property<int>("Id")
+                    .ValueGeneratedOnAdd();
+
+                attr.HasKey("Id");
+
+                attr.Property(a => a.Key)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                attr.Property(a => a.Value)
+                    .HasMaxLength(500)
+                    .IsRequired();
+
+                attr.HasIndex("ProductId", nameof(ProductAttribute.Key)).IsUnique();
+            });
+
+            builder.Navigation(p => p.Images)
+                .HasField("_images")
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
             builder.OwnsMany(p => p.Images, img =>
             {
                 img.ToTable("ProductImages");
-                img.WithOwner().HasForeignKey("ProductId");
+
+                img.WithOwner()
+                    .HasForeignKey(i => i.ProductId);
 
                 img.HasKey(i => i.Id);
-                img.Property(i => i.Id).ValueGeneratedNever();
 
-
+                img.Property(i => i.Id)
+                    .ValueGeneratedNever();
 
                 img.Property(i => i.ImageName)
-                    .HasConversion(n => n.Value, v => new Name(v))
+                    .HasConversion(
+                        name => name.Value,
+                        value => new Name(value))
                     .HasMaxLength(200)
                     .IsRequired();
 
-                img.Property(i => i.Sequence).IsRequired();
+                img.Property(i => i.Sequence)
+                    .IsRequired();
 
-                img.HasIndex("ProductId", nameof(ProductImage.Sequence));
+                img.HasIndex(i => new
+                {
+                    i.ProductId,
+                    i.Sequence
+                }).IsUnique();
             });
 
-
-            builder.HasIndex(p => p.CategoryId);
-            builder.HasIndex(p => p.Name);
         }
     }
 }

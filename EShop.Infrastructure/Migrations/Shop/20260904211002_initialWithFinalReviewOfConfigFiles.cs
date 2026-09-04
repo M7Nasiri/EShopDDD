@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EShop.Infrastructure.Migrations.Shop
 {
     /// <inheritdoc />
-    public partial class initialShop : Migration
+    public partial class initialWithFinalReviewOfConfigFiles : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace EShop.Infrastructure.Migrations.Shop
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    FullName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -150,19 +150,19 @@ namespace EShop.Infrastructure.Migrations.Shop
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ReceiverName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    ShippingReceiverName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    ShippingPhoneNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     ShippingTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ShippingProvince = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ShippingCity = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ShippingStreet = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     ShippingPlaque = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ShippingPostalCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CouponCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CouponCode = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: true),
                     CouponPercent = table.Column<int>(type: "int", nullable: true),
                     MembershipDiscountTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     MembershipDiscountPercent = table.Column<int>(type: "int", nullable: true),
-                    Membership_FreeShipping = table.Column<bool>(type: "bit", nullable: true),
+                    MembershipFreeShipping = table.Column<bool>(type: "bit", nullable: true),
                     BaseShippingCost = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -221,7 +221,7 @@ namespace EShop.Infrastructure.Migrations.Shop
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     Stock = table.Column<int>(type: "int", nullable: false),
-                    UnitPrice_Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ImageName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -244,11 +244,11 @@ namespace EShop.Infrastructure.Migrations.Shop
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Street = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Plaque = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    PostalCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    TrackingCode = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    Plaque = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PostalCode = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
+                    Status = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
+                    TrackingCode = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsDelete = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -333,15 +333,15 @@ namespace EShop.Infrastructure.Migrations.Shop
                 name: "ProductAttributes",
                 columns: table => new
                 {
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Key = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
+                    Value = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductAttributes", x => new { x.ProductId, x.Id });
+                    table.PrimaryKey("PK_ProductAttributes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ProductAttributes_Products_ProductId",
                         column: x => x.ProductId,
@@ -455,6 +455,12 @@ namespace EShop.Infrastructure.Migrations.Shop
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductAttributes_ProductId_Key",
+                table: "ProductAttributes",
+                columns: new[] { "ProductId", "Key" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductComments_ProductId_Status",
                 table: "ProductComments",
                 columns: new[] { "ProductId", "Status" });
@@ -467,7 +473,8 @@ namespace EShop.Infrastructure.Migrations.Shop
             migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductId_Sequence",
                 table: "ProductImages",
-                columns: new[] { "ProductId", "Sequence" });
+                columns: new[] { "ProductId", "Sequence" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
@@ -493,7 +500,8 @@ namespace EShop.Infrastructure.Migrations.Shop
             migrationBuilder.CreateIndex(
                 name: "IX_Shipments_TrackingCode",
                 table: "Shipments",
-                column: "TrackingCode");
+                column: "TrackingCode",
+                filter: "[TrackingCode] IS NOT NULL");
         }
 
         /// <inheritdoc />

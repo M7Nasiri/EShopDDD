@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EShop.Infrastructure.Migrations.Shop
 {
     [DbContext(typeof(ShopContext))]
-    [Migration("20260904174558_initialShop")]
-    partial class initialShop
+    [Migration("20260904211002_initialWithFinalReviewOfConfigFiles")]
+    partial class initialWithFinalReviewOfConfigFiles
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,11 +28,16 @@ namespace EShop.Infrastructure.Migrations.Shop
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.AdminAgg.Admin", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("FullName");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -45,7 +50,6 @@ namespace EShop.Infrastructure.Migrations.Shop
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.CartAgg.Cart", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationDate")
@@ -76,7 +80,6 @@ namespace EShop.Infrastructure.Migrations.Shop
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.CategoryAgg.Category", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationDate")
@@ -84,6 +87,12 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("Name");
 
                     b.Property<Guid?>("ParentCategoryId")
                         .HasColumnType("uniqueidentifier");
@@ -186,11 +195,16 @@ namespace EShop.Infrastructure.Migrations.Shop
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.CustomerAgg.Customer", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasColumnName("FullName");
 
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
@@ -249,7 +263,6 @@ namespace EShop.Infrastructure.Migrations.Shop
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.MembershipPlanAgg.MembershipPlan", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationDate")
@@ -257,6 +270,10 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                     b.Property<int>("DiscountPercent")
                         .HasColumnType("int");
+
+                    b.Property<int>("DurationInDays")
+                        .HasColumnType("int")
+                        .HasColumnName("DurationInDays");
 
                     b.Property<bool>("FreeShipping")
                         .HasColumnType("bit");
@@ -267,7 +284,21 @@ namespace EShop.Infrastructure.Migrations.Shop
                     b.Property<bool>("IsDelete")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("Name");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("Price");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("MembershipPlans", (string)null);
                 });
@@ -276,6 +307,14 @@ namespace EShop.Infrastructure.Migrations.Shop
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("BaseShippingCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("BaseShippingCost");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -350,7 +389,6 @@ namespace EShop.Infrastructure.Migrations.Shop
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.ProductAgg.Product", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CategoryId")
@@ -382,6 +420,11 @@ namespace EShop.Infrastructure.Migrations.Shop
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("UnitPrice");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -408,11 +451,13 @@ namespace EShop.Infrastructure.Migrations.Shop
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("TrackingCode")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.HasKey("Id");
 
@@ -421,34 +466,10 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                     b.HasIndex("Status");
 
-                    b.HasIndex("TrackingCode");
+                    b.HasIndex("TrackingCode")
+                        .HasFilter("[TrackingCode] IS NOT NULL");
 
                     b.ToTable("Shipments", (string)null);
-                });
-
-            modelBuilder.Entity("_01.Domain.Entities.Aggregates.AdminAgg.Admin", b =>
-                {
-                    b.OwnsOne("_01.Domain.ValueObjects.Name", "FullName", b1 =>
-                        {
-                            b1.Property<Guid>("AdminId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(300)
-                                .HasColumnType("nvarchar(300)")
-                                .HasColumnName("FullName");
-
-                            b1.HasKey("AdminId");
-
-                            b1.ToTable("Admins");
-
-                            b1.WithOwner()
-                                .HasForeignKey("AdminId");
-                        });
-
-                    b.Navigation("FullName")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.CartAgg.Cart", b =>
@@ -456,7 +477,6 @@ namespace EShop.Infrastructure.Migrations.Shop
                     b.OwnsMany("_01.Domain.Entities.Aggregates.CartAgg.CartItem", "Items", b1 =>
                         {
                             b1.Property<Guid>("Id")
-                                .ValueGeneratedOnAdd()
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<Guid>("CartId")
@@ -471,6 +491,10 @@ namespace EShop.Infrastructure.Migrations.Shop
                             b1.Property<Guid>("ProductId")
                                 .HasColumnType("uniqueidentifier");
 
+                            b1.Property<int>("Quantity")
+                                .HasColumnType("int")
+                                .HasColumnName("Quantity");
+
                             b1.HasKey("Id");
 
                             b1.HasIndex("CartId", "ProductId")
@@ -480,26 +504,6 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                             b1.WithOwner()
                                 .HasForeignKey("CartId");
-
-                            b1.OwnsOne("_01.Domain.ValueObjects.Quantity", "Quantity", b2 =>
-                                {
-                                    b2.Property<Guid>("CartItemId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<int>("Value")
-                                        .HasColumnType("int")
-                                        .HasColumnName("Quantity");
-
-                                    b2.HasKey("CartItemId");
-
-                                    b2.ToTable("CartItems");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("CartItemId");
-                                });
-
-                            b1.Navigation("Quantity")
-                                .IsRequired();
                         });
 
                     b.Navigation("Items");
@@ -511,28 +515,6 @@ namespace EShop.Infrastructure.Migrations.Shop
                         .WithMany()
                         .HasForeignKey("ParentCategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.OwnsOne("_01.Domain.ValueObjects.Name", "Name", b1 =>
-                        {
-                            b1.Property<Guid>("CategoryId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)")
-                                .HasColumnName("Name");
-
-                            b1.HasKey("CategoryId");
-
-                            b1.ToTable("Categories");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CategoryId");
-                        });
-
-                    b.Navigation("Name")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.CustomerAgg.Customer", b =>
@@ -613,7 +595,6 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasColumnName("Default_City");
 
                             b1.Property<string>("PhoneNumber")
-                                .IsRequired()
                                 .HasMaxLength(20)
                                 .HasColumnType("nvarchar(20)")
                                 .HasColumnName("Default_PhoneNumber");
@@ -637,7 +618,6 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasColumnName("Default_Province");
 
                             b1.Property<string>("ReceiverName")
-                                .IsRequired()
                                 .HasMaxLength(150)
                                 .HasColumnType("nvarchar(150)")
                                 .HasColumnName("Default_ReceiverName");
@@ -662,31 +642,9 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasForeignKey("CustomerId");
                         });
 
-                    b.OwnsOne("_01.Domain.ValueObjects.Name", "FullName", b1 =>
-                        {
-                            b1.Property<Guid>("CustomerId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)")
-                                .HasColumnName("FullName");
-
-                            b1.HasKey("CustomerId");
-
-                            b1.ToTable("Customers");
-
-                            b1.WithOwner()
-                                .HasForeignKey("CustomerId");
-                        });
-
                     b.Navigation("Addresses");
 
                     b.Navigation("DefaultAddress");
-
-                    b.Navigation("FullName")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.MembershipAgg.Membership", b =>
@@ -713,112 +671,8 @@ namespace EShop.Infrastructure.Migrations.Shop
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("_01.Domain.Entities.Aggregates.MembershipPlanAgg.MembershipPlan", b =>
-                {
-                    b.OwnsOne("_01.Domain.ValueObjects.Name", "Name", b1 =>
-                        {
-                            b1.Property<Guid>("MembershipPlanId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)")
-                                .HasColumnName("Name");
-
-                            b1.HasKey("MembershipPlanId");
-
-                            b1.HasIndex("Value")
-                                .IsUnique();
-
-                            b1.ToTable("MembershipPlans");
-
-                            b1.WithOwner()
-                                .HasForeignKey("MembershipPlanId");
-                        });
-
-                    b.OwnsOne("_01.Domain.ValueObjects.Money", "Price", b1 =>
-                        {
-                            b1.Property<Guid>("MembershipPlanId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("Price");
-
-                            b1.HasKey("MembershipPlanId");
-
-                            b1.ToTable("MembershipPlans");
-
-                            b1.WithOwner()
-                                .HasForeignKey("MembershipPlanId");
-                        });
-
-                    b.OwnsOne("_01.Domain.ValueObjects.MembershipDuration", "DurationInDays", b1 =>
-                        {
-                            b1.Property<Guid>("MembershipPlanId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<int>("Days")
-                                .HasColumnType("int")
-                                .HasColumnName("DurationInDays");
-
-                            b1.HasKey("MembershipPlanId");
-
-                            b1.ToTable("MembershipPlans");
-
-                            b1.WithOwner()
-                                .HasForeignKey("MembershipPlanId");
-                        });
-
-                    b.Navigation("DurationInDays")
-                        .IsRequired();
-
-                    b.Navigation("Name")
-                        .IsRequired();
-
-                    b.Navigation("Price")
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.OrderAgg.Order", b =>
                 {
-                    b.OwnsOne("_01.Domain.ValueObjects.Money", "BaseShippingCost", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("BaseShippingCost");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
-                    b.OwnsOne("_01.Domain.ValueObjects.DomainDate", "CreatedAt", b1 =>
-                        {
-                            b1.Property<Guid>("OrderId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<DateTime>("Value")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("CreatedAt");
-
-                            b1.HasKey("OrderId");
-
-                            b1.ToTable("Orders");
-
-                            b1.WithOwner()
-                                .HasForeignKey("OrderId");
-                        });
-
                     b.OwnsOne("_01.Domain.ValueObjects.Address", "ShippingAddress", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -834,7 +688,7 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .IsRequired()
                                 .HasMaxLength(20)
                                 .HasColumnType("nvarchar(20)")
-                                .HasColumnName("PhoneNumber");
+                                .HasColumnName("ShippingPhoneNumber");
 
                             b1.Property<string>("Plaque")
                                 .IsRequired()
@@ -858,7 +712,7 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .IsRequired()
                                 .HasMaxLength(150)
                                 .HasColumnType("nvarchar(150)")
-                                .HasColumnName("ReceiverName");
+                                .HasColumnName("ShippingReceiverName");
 
                             b1.Property<string>("Street")
                                 .IsRequired()
@@ -897,6 +751,15 @@ namespace EShop.Infrastructure.Migrations.Shop
                             b1.Property<Guid>("ProductId")
                                 .HasColumnType("uniqueidentifier");
 
+                            b1.Property<int>("Quantity")
+                                .HasColumnType("int")
+                                .HasColumnName("Quantity");
+
+                            b1.Property<decimal>("UnitPrice")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("decimal(18,2)")
+                                .HasColumnName("UnitPrice");
+
                             b1.HasKey("Id");
 
                             b1.HasIndex("OrderId");
@@ -905,47 +768,6 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
-
-                            b1.OwnsOne("_01.Domain.ValueObjects.Quantity", "Quantity", b2 =>
-                                {
-                                    b2.Property<Guid>("OrderItemId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<int>("Value")
-                                        .HasColumnType("int")
-                                        .HasColumnName("Quantity");
-
-                                    b2.HasKey("OrderItemId");
-
-                                    b2.ToTable("OrderItems");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("OrderItemId");
-                                });
-
-                            b1.OwnsOne("_01.Domain.ValueObjects.Money", "UnitPrice", b2 =>
-                                {
-                                    b2.Property<Guid>("OrderItemId")
-                                        .HasColumnType("uniqueidentifier");
-
-                                    b2.Property<decimal>("Amount")
-                                        .HasPrecision(18, 2)
-                                        .HasColumnType("decimal(18,2)")
-                                        .HasColumnName("UnitPrice");
-
-                                    b2.HasKey("OrderItemId");
-
-                                    b2.ToTable("OrderItems");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("OrderItemId");
-                                });
-
-                            b1.Navigation("Quantity")
-                                .IsRequired();
-
-                            b1.Navigation("UnitPrice")
-                                .IsRequired();
                         });
 
                     b.OwnsOne("_01.Domain.ValueObjects.AppliedCouponSnapshot", "AppliedCoupon", b1 =>
@@ -956,7 +778,8 @@ namespace EShop.Infrastructure.Migrations.Shop
                             b1.Property<string>("Code")
                                 .IsRequired()
                                 .HasMaxLength(50)
-                                .HasColumnType("nvarchar(50)")
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(50)")
                                 .HasColumnName("CouponCode");
 
                             b1.Property<int>("Percent")
@@ -978,7 +801,7 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                             b1.Property<bool>("FreeShipping")
                                 .HasColumnType("bit")
-                                .HasColumnName("Membership_FreeShipping");
+                                .HasColumnName("MembershipFreeShipping");
 
                             b1.Property<int>("Percent")
                                 .HasColumnType("int")
@@ -1000,12 +823,6 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                     b.Navigation("AppliedCoupon");
 
-                    b.Navigation("BaseShippingCost")
-                        .IsRequired();
-
-                    b.Navigation("CreatedAt")
-                        .IsRequired();
-
                     b.Navigation("Items");
 
                     b.Navigation("MembershipDiscount");
@@ -1016,6 +833,23 @@ namespace EShop.Infrastructure.Migrations.Shop
 
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.PaymentAgg.Payment", b =>
                 {
+                    b.OwnsOne("_01.Domain.ValueObjects.DomainDate", "CreatedAt", b1 =>
+                        {
+                            b1.Property<Guid>("PaymentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<DateTime>("Value")
+                                .HasColumnType("datetime2")
+                                .HasColumnName("CreatedAt");
+
+                            b1.HasKey("PaymentId");
+
+                            b1.ToTable("Payments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PaymentId");
+                        });
+
                     b.OwnsOne("_01.Domain.ValueObjects.Money", "Amount", b1 =>
                         {
                             b1.Property<Guid>("PaymentId")
@@ -1034,23 +868,6 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasForeignKey("PaymentId");
                         });
 
-                    b.OwnsOne("_01.Domain.ValueObjects.DomainDate", "CreatedAt", b1 =>
-                        {
-                            b1.Property<Guid>("PaymentId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<DateTime>("Value")
-                                .HasColumnType("datetime2")
-                                .HasColumnName("CreatedAt");
-
-                            b1.HasKey("PaymentId");
-
-                            b1.ToTable("Payments");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PaymentId");
-                        });
-
                     b.Navigation("Amount")
                         .IsRequired();
 
@@ -1060,24 +877,6 @@ namespace EShop.Infrastructure.Migrations.Shop
 
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.ProductAgg.Product", b =>
                 {
-                    b.OwnsOne("_01.Domain.ValueObjects.Money", "UnitPrice", b1 =>
-                        {
-                            b1.Property<Guid>("ProductId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Amount")
-                                .HasPrecision(18, 2)
-                                .HasColumnType("decimal(18,2)")
-                                .HasColumnName("UnitPrice_Amount");
-
-                            b1.HasKey("ProductId");
-
-                            b1.ToTable("Products");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ProductId");
-                        });
-
                     b.OwnsMany("_01.Domain.Entities.Aggregates.ProductAgg.ProductImage", "Images", b1 =>
                         {
                             b1.Property<Guid>("Id")
@@ -1102,7 +901,8 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                             b1.HasKey("Id");
 
-                            b1.HasIndex("ProductId", "Sequence");
+                            b1.HasIndex("ProductId", "Sequence")
+                                .IsUnique();
 
                             b1.ToTable("ProductImages", (string)null);
 
@@ -1112,9 +912,6 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                     b.OwnsMany("_01.Domain.ValueObjects.ProductAttribute", "Attributes", b1 =>
                         {
-                            b1.Property<Guid>("ProductId")
-                                .HasColumnType("uniqueidentifier");
-
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int");
@@ -1126,12 +923,18 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)");
 
+                            b1.Property<Guid>("ProductId")
+                                .HasColumnType("uniqueidentifier");
+
                             b1.Property<string>("Value")
                                 .IsRequired()
                                 .HasMaxLength(500)
                                 .HasColumnType("nvarchar(500)");
 
-                            b1.HasKey("ProductId", "Id");
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ProductId", "Key")
+                                .IsUnique();
 
                             b1.ToTable("ProductAttributes", (string)null);
 
@@ -1142,9 +945,6 @@ namespace EShop.Infrastructure.Migrations.Shop
                     b.Navigation("Attributes");
 
                     b.Navigation("Images");
-
-                    b.Navigation("UnitPrice")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("_01.Domain.Entities.Aggregates.ShipmentAgg.Shipment", b =>
@@ -1168,14 +968,15 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                             b1.Property<string>("Plaque")
                                 .IsRequired()
-                                .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)")
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
                                 .HasColumnName("Plaque");
 
                             b1.Property<string>("PostalCode")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("nvarchar(20)")
+                                .IsUnicode(false)
+                                .HasColumnType("varchar(20)")
                                 .HasColumnName("PostalCode");
 
                             b1.Property<string>("Province")
@@ -1192,8 +993,8 @@ namespace EShop.Infrastructure.Migrations.Shop
 
                             b1.Property<string>("Street")
                                 .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)")
+                                .HasMaxLength(300)
+                                .HasColumnType("nvarchar(300)")
                                 .HasColumnName("Street");
 
                             b1.Property<string>("Title")
