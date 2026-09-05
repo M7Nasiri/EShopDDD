@@ -24,7 +24,8 @@ namespace EShop.Infrastructure.PersistentEFCore.CategoryAgg
             builder.HasOne<Category>()
                 .WithMany()
                 .HasForeignKey(x => x.ParentCategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict)
+                .IsRequired(false);
 
             builder.HasIndex(x => x.ParentCategoryId);
 

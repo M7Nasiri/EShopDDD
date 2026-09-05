@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="CartAgg\" />
+    <Folder Include="CommentAgg\" />
+    <Folder Include="CouponAgg\" />
+    <Folder Include="CustomerAgg\" />
+    <Folder Include="MembershipAgg\" />
+    <Folder Include="MembershipPlanAgg\" />
+    <Folder Include="ShipmentAgg\" />
+    <Folder Include="ProductAgg\" />
+    <Folder Include="PaymentAgg\" />
+    <Folder Include="OrderAgg\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\01.Domain\01.Domain.csproj" />
+    <ProjectReference Include="..\EShop.Infrastructure\EShop.Infrastructure.csproj" />
+    <ProjectReference Include="..\EShop.Shared.Query\EShop.Shared.Query.csproj" />
+  </ItemGroup>
+
+</Project>
