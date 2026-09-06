@@ -1,4 +1,4 @@
-﻿using _01.Domain.DoamainEvents.Orders;
+﻿using _01.Domain.DomainEvents.Orders;
 using _01.Domain.Entities.Aggregates.OrderAgg.Repository;
 using _01.Domain.Entities.Aggregates.ProductAgg.Repository;
 using _01.Domain.Exceptions;

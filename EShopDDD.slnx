@@ -11,4 +11,5 @@
   <Project Path="EShop.Infrastructure/EShop.Infrastructure.csproj" Id="1f31c37a-abc5-4a07-ad83-6d9a9841c007" />
   <Project Path="EShop.Query/EShop.Query.csproj" Id="1188c9cc-3002-425f-b86b-cdd9f3aadf9c" />
   <Project Path="EShop.WebAPI/EShop.WebAPI.csproj" Id="f371aed6-a986-481c-838a-c2f513a96cde" />
+  <Project Path="Shop.Config/Shop.Config.csproj" Id="9952e86b-e1f7-469e-9f7d-392fc58c1571" />
 </Solution>

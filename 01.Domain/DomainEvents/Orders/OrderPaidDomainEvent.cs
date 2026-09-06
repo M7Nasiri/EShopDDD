@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace _01.Domain.DoamainEvents.Orders
+namespace _01.Domain.DomainEvents.Orders
 {
     public sealed class OrderPaidDomainEvent(
     Guid orderId,

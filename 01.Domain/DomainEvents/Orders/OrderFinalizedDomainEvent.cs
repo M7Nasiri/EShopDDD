@@ -1,7 +1,7 @@
 ﻿using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;
 
-namespace _01.Domain.DoamainEvents.Orders
+namespace _01.Domain.DomainEvents.Orders
 {
     public sealed class OrderFinalizedDomainEvent(
     Guid orderId,

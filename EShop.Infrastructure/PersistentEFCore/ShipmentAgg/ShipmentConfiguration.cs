@@ -36,7 +36,7 @@ namespace EShop.Infrastructure.PersistentEFCore.ShipmentAgg
             builder.OwnsOne(s => s.Address, addressBuilder =>
             {
                 addressBuilder.Property(a => a.Title)
-                   .HasColumnName("Title")
+                   .HasColumnName("Name")
                    .HasMaxLength(100)
                    .IsRequired(false);
 

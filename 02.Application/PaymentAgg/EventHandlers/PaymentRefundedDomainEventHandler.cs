@@ -1,4 +1,4 @@
-﻿using _01.Domain.DoamainEvents.Payment;
+﻿using _01.Domain.DomainEvents.Payment;
 using _01.Domain.Entities.Aggregates.OrderAgg.Repository;
 using _01.Domain.Entities.Aggregates.PaymentAgg.Repository;
 using EShop.Shared.Application.Interfaces.Persistence;

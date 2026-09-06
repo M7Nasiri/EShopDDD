@@ -6,7 +6,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using EShop.Infrastructure;
 using System.Text;
+using _02.Application;
+using EShop.Query;
 using EShop.Shared.Application;
+using Shop.Config;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -18,10 +22,13 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.Init();
-
+builder.Services.InitConfig();
+builder.Services.RegisterApplicationDependency();
+builder.Services.RegistrationQueryServices();
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>()

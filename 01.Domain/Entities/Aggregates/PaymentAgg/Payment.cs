@@ -1,5 +1,5 @@
 ﻿using _01.Domain.Consts;
-using _01.Domain.DoamainEvents.Payment;
+using _01.Domain.DomainEvents.Payment;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;

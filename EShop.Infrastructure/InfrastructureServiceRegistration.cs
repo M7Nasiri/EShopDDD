@@ -32,6 +32,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using EShop.Infrastructure.Persistent.Dapper;
 
 namespace EShop.Infrastructure
 {
@@ -57,6 +58,8 @@ namespace EShop.Infrastructure
 
             services.AddDbContext<ShopContext>(options =>
                 options.UseSqlServer(connectionString));
+
+            services.AddTransient(_=>new DapperContext(connectionString));
 
             services.AddMassTransit(busConfigurator =>
             {
@@ -98,7 +101,6 @@ namespace EShop.Infrastructure
             services.AddScoped<IShipmentRepository, ShipmentRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 
             return services;
         }

@@ -1,5 +1,5 @@
 ﻿using _01.Domain.Consts;
-using _01.Domain.DoamainEvents.Comment;
+using _01.Domain.DomainEvents.Comments;
 using _01.Domain.Exceptions;
 using EShop.Shared.Domain;
 

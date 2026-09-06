@@ -568,7 +568,7 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasMaxLength(300)
                                 .HasColumnType("nvarchar(300)");
 
-                            b1.Property<string>("Title")
+                            b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)");
@@ -628,7 +628,7 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasColumnType("nvarchar(300)")
                                 .HasColumnName("Default_Street");
 
-                            b1.Property<string>("Title")
+                            b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)")
@@ -720,7 +720,7 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasColumnType("nvarchar(300)")
                                 .HasColumnName("ShippingStreet");
 
-                            b1.Property<string>("Title")
+                            b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)")
@@ -997,10 +997,10 @@ namespace EShop.Infrastructure.Migrations.Shop
                                 .HasColumnType("nvarchar(300)")
                                 .HasColumnName("Street");
 
-                            b1.Property<string>("Title")
+                            b1.Property<string>("Name")
                                 .HasMaxLength(100)
                                 .HasColumnType("nvarchar(100)")
-                                .HasColumnName("Title");
+                                .HasColumnName("Name");
 
                             b1.HasKey("ShipmentId");
 

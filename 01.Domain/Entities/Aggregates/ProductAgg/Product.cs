@@ -1,4 +1,5 @@
-﻿using _01.Domain.DoamainEvents.Products;
+﻿using _01.Domain.DomainEvents.Products;
+using _01.Domain.DomainEvents.Products;
 using _01.Domain.Exceptions;
 using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;

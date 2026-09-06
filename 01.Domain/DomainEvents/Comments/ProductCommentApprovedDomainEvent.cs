@@ -1,7 +1,7 @@
 ﻿using _01.Domain.ValueObjects;
 using EShop.Shared.Domain;
 
-namespace _01.Domain.DoamainEvents.Comment
+namespace _01.Domain.DomainEvents.Comments
 {
    
     public sealed class ProductCommentApprovedDomainEvent : BaseDomainEvent

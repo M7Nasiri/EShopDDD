@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace _01.Domain.DoamainEvents.Products
+namespace _01.Domain.DomainEvents.Products
 {
     public sealed class ProductStockLowDomainEvent(
         Guid productId,

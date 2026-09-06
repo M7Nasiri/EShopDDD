@@ -1,4 +1,4 @@
-﻿using _01.Domain.DoamainEvents.Products;
+﻿using _01.Domain.DomainEvents.Products;
 using EShop.Shared.Application.Interfaces.Events;
 using MassTransit;
 using MediatR;

@@ -1,5 +1,5 @@
-﻿using _01.Domain.DoamainEvents.Payment;
-using _01.Domain.DoamainEvents.Products;
+﻿using _01.Domain.DomainEvents.Products;
+using _01.Domain.DomainEvents.Payment;
 using _01.Domain.Entities.Aggregates.OrderAgg.Repository;
 using _01.Domain.Entities.Aggregates.ShipmentAgg;
 using EShop.Shared.Application.Interfaces.Events;
