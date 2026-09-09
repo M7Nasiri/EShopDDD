@@ -45,5 +45,14 @@ namespace EShop.Infrastructure.Identity.Services
 
             return guestId;
         }
+        public string? GetGuestId()
+        {
+            return _httpContextAccessor.HttpContext?.Request.Cookies[Consts.GuestId];
+        }
+
+        public void Clear()
+        {
+            _httpContextAccessor.HttpContext?.Response.Cookies.Delete(Consts.GuestId);
+        }
     }
 }

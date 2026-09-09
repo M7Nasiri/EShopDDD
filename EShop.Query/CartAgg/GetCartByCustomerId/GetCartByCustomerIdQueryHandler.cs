@@ -37,7 +37,7 @@ public class GetCartByCustomerIdQueryHandler : IQueryHandler<GetCartByCustomerId
             Left JOIN Customers cust ON c.CustomerId = cust.Id
             Left JOIN CartItems ci ON c.Id = ci.CartId
             Left JOIN Products p ON ci.ProductId = p.Id
-            WHERE c.CustomerId = @CustomerId";
+            WHERE c.CustomerId = @CustomerId  AND c.Status = @ActiveStatus";
 
         using var connection = _dapperContext.CreateConnection();
 
@@ -61,7 +61,7 @@ public class GetCartByCustomerIdQueryHandler : IQueryHandler<GetCartByCustomerId
 
                 return currentCart;
             },
-            param: new { CustomerId = request.CustomerId },
+            param: new { CustomerId = request.CustomerId ,ActiveStatus = 1 },
             splitOn: "Id" // تقسیم‌بندی بین ستون‌های CartDto و CartItemDto بر اساس شناسه دوم (ci.Id)
         );
 

@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="CommentAgg\" />
     <Folder Include="CouponAgg\" />
-    <Folder Include="CustomerAgg\" />
     <Folder Include="MembershipAgg\" />
     <Folder Include="MembershipPlanAgg\" />
     <Folder Include="ShipmentAgg\" />

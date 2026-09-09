@@ -15,5 +15,7 @@ namespace _01.Domain.Entities.Aggregates.CartAgg.Repository
         Task<Cart?> GetByGuestIdAsync(
             string guestId,
             CancellationToken cancellationToken);
+
+        void Remove(Cart cart);
     }
 }

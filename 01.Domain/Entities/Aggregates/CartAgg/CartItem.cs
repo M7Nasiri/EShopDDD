@@ -24,12 +24,39 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
             ProductId = productId;
             Quantity = quantity;
         }
+        public static CartItem Create(
+            Guid cartId,
+            Guid productId,
+            Quantity quantity)
+        {
+            if (cartId == Guid.Empty)
+                throw new ArgumentException(nameof(cartId));
+
+            if (productId == Guid.Empty)
+                throw new ArgumentException(nameof(productId));
+
+            if (quantity.Value <= 0)
+                throw new InvalidOperationException(
+                    "Quantity must be greater than zero.");
+
+            return new CartItem(
+                productId,
+                quantity);
+        }
+
 
         internal void Increase(
             Quantity quantity)
         {
+            ArgumentNullException.ThrowIfNull(quantity);
             Quantity = new Quantity(
                 Quantity.Value + quantity.Value);
+        }
+
+        public void ChangeQuantity(Quantity newQuantity)
+        {
+            ArgumentNullException.ThrowIfNull(newQuantity);
+            Quantity = newQuantity;
         }
     }
 }

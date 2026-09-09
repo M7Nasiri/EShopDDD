@@ -12,85 +12,61 @@ using System.Text;
 
 namespace _02.Application.CartAgg.Commands.AddItem
 {
-    public sealed class AddItemCommandHandler
-    : IBaseCommandHandler<AddItemCommand>
+    public sealed class AddItemCommandHandler(
+        ICartRepository cartRepository,
+        IProductRepository productRepository,
+        ICurrentUser currentUser,
+        IUnitOfWork unitOfWork,
+        IGuestSession guestSession)
+        : IBaseCommandHandler<AddItemCommand>
     {
-        private readonly ICartRepository _cartRepository;
-        private readonly IProductRepository _productRepository;
-        private readonly ICurrentUser _currentUser;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public AddItemCommandHandler(
-            ICartRepository cartRepository,
-            IProductRepository productRepository,
-            ICurrentUser currentUser,
-            IUnitOfWork unitOfWork)
-        {
-            _cartRepository = cartRepository;
-            _productRepository = productRepository;
-            _currentUser = currentUser;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<OperationResult> Handle(AddItemCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsValid())
-            {
-                throw new UnauthorizedAccessException(
-                    "User must be authenticated.");
-            }
 
-            var customerId = _currentUser.UserId.Value;
-
-
-
-            var productId = request.ProductId;
             var quantity = new Quantity(request.Quantity);
 
-            var product = await _productRepository.GetAsync(
-                productId,
-                cancellationToken);
-
+            var product = await productRepository.GetAsync(request.ProductId, cancellationToken);
             if (product is null)
                 throw new EShopNullException("Product was not found.");
 
-
             if (product.Stock.Value < quantity.Value)
-                throw new EShopDomainException(
-                    "Requested quantity is not available in stock.");
+                throw new EShopDomainException("Requested quantity is not available in stock.");
 
-            var cart =
-                await _cartRepository.GetByCustomerIdAsync(
-                    customerId,
-                    cancellationToken);
+            var cart = await GetOrCreateCartAsync(cancellationToken);
 
-            if (cart is null)
+            cart.AddItem(request.ProductId, quantity, product.Stock);
+
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return OperationResult.Success();
+        }
+
+        private async Task<Cart> GetOrCreateCartAsync(CancellationToken cancellationToken)
+        {
+            if (currentUser.IsValid() && currentUser.UserId.HasValue)
             {
-                cart = new Cart(
-                    customerId);
+                var customerId = currentUser.UserId.Value;
+                var customerCart = await cartRepository.GetByCustomerIdAsync(customerId, cancellationToken);
 
-                await _cartRepository.AddAsync(
-                    cart,
-                    cancellationToken);
+                if (customerCart is null)
+                {
+                    customerCart = Cart.CreateForCustomer(customerId);
+                    await cartRepository.AddAsync(customerCart, cancellationToken);
+                }
+
+                return customerCart;
             }
 
-            var existingItem = cart.Items.FirstOrDefault(
-                x => x.ProductId == productId);
+            var guestId = guestSession.GetOrCreateGuestId();
+            var guestCart = await cartRepository.GetByGuestIdAsync(guestId, cancellationToken);
 
-            var finalQuantity =
-                (existingItem?.Quantity.Value ?? 0) +
-                quantity.Value;
+            if (guestCart is null)
+            {
+                guestCart = Cart.CreateForGuest(guestId);
+                await cartRepository.AddAsync(guestCart, cancellationToken);
+            }
 
-            if (product.Stock.Value < finalQuantity)
-                throw new EShopDomainException(
-                    "Total requested quantity is not available in stock.");
-
-            var availableStock = product.Stock;
-            cart.AddItem(productId, quantity, availableStock);
-
-            await _unitOfWork.SaveChangesAsync(
-                cancellationToken);
-            return OperationResult.Success();
+            return guestCart;
         }
     }
 

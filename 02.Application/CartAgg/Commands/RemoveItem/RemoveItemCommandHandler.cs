@@ -1,4 +1,5 @@
-﻿using _01.Domain.Entities.Aggregates.CartAgg.Repository;
+﻿using _01.Domain.Entities.Aggregates.CartAgg;
+using _01.Domain.Entities.Aggregates.CartAgg.Repository;
 using _01.Domain.Entities.Aggregates.ProductAgg;
 using _01.Domain.Entities.Aggregates.ProductAgg.Repository;
 using _01.Domain.Exceptions;
@@ -12,58 +13,58 @@ using System.Text;
 
 namespace _02.Application.CartAgg.Commands.RemoveItem
 {
-    public class RemoveItemCommandHandler : IBaseCommandHandler<RemoveItemCommand>
+    public class RemoveItemCommandHandler(
+        ICartRepository cartRepository,
+        ICurrentUser currentUser,
+        IProductRepository productRepository,
+        IGuestSession guestSession,
+        IUnitOfWork unitOfWork)
+        : IBaseCommandHandler<RemoveItemCommand>
     {
-        private readonly ICartRepository _cartRepository;
-        private readonly ICurrentUser _currentUser;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IProductRepository _productRepository;
-
-
-        public RemoveItemCommandHandler(
-           ICartRepository cartRepository,
-           ICurrentUser currentUser,
-           IProductRepository productRepository,
-           IUnitOfWork unitOfWork)
-        {
-            _cartRepository = cartRepository;
-            _currentUser = currentUser;
-            _unitOfWork = unitOfWork;
-        }
+        private readonly ICartRepository _cartRepository = cartRepository;
+        private readonly ICurrentUser _currentUser = currentUser;
 
 
         public async Task<OperationResult> Handle(RemoveItemCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated ||
-               _currentUser.UserId is null)
-            {
-                throw new UnauthorizedAccessException(
-                    "User must be authenticated.");
-            }
-
-            var customerId = _currentUser.UserId.Value;
+            
             var productId = request.ProductId;
 
             // 1) محصول را می‌خوانیم
-            var product = await _productRepository.GetAsync(
+            var product = await productRepository.GetAsync(
                 productId,
                 cancellationToken);
 
             if (product is null)
                 throw new EShopNullException("Product was not found.");
 
-            var cart = await _cartRepository.GetByCustomerIdAsync(
-                    customerId,
+            var cart = await GetOrCreateCartAsync(
                     cancellationToken);
 
             if (cart is null)
                 throw new EShopNullException("Cart does not exist");
-            cart.RemoveItem(productId);
+            cart?.RemoveItem(productId);
 
             // EF Core تغییرات Aggregate را Track کرده است
-            await _unitOfWork.SaveChangesAsync(
+            await unitOfWork.SaveChangesAsync(
                 cancellationToken);
             return OperationResult.Success();
+        }
+
+        private async Task<Cart?> GetOrCreateCartAsync(CancellationToken cancellationToken)
+        {
+            if (currentUser.IsValid() && currentUser.UserId.HasValue)
+            {
+                var customerId = currentUser.UserId.Value;
+                var customerCart = await cartRepository.GetByCustomerIdAsync(customerId, cancellationToken);
+
+                return customerCart;
+            }
+
+            var guestId = guestSession.GetOrCreateGuestId();
+            var guestCart = await cartRepository.GetByGuestIdAsync(guestId, cancellationToken);
+
+            return guestCart;
         }
     }
 }

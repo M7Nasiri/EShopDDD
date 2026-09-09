@@ -26,6 +26,11 @@ namespace EShop.Infrastructure.PersistentEFCore.CartAgg
                     cancellationToken);
         }
 
+        public void Remove(Cart cart)
+        {
+             _dbContext.Set<Cart>().Remove(cart);
+        }
+
         public Task<Cart?> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken)
         {
             return _dbContext.Set<Cart>()

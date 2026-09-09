@@ -4,6 +4,7 @@ using EShop.Shared.Domain;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using _01.Domain.Consts;
 
 namespace _01.Domain.Entities.Aggregates.CartAgg
 {
@@ -19,6 +20,8 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
         public IReadOnlyCollection<CartItem> Items =>
             _items.AsReadOnly();
 
+        public CartStatus Status { get; private set; }
+
         private Cart()
         {
         }
@@ -26,9 +29,13 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
         public Cart(
             Guid? customerId)
         {
+            if (customerId == Guid.Empty)
+                throw new EShopDomainException("Customer id is invalid.");
+
             Id = Guid.NewGuid();;
             CustomerId = customerId;
         }
+
 
         public Cart(
             string guestId)
@@ -41,6 +48,15 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
             GuestId = guestId.Trim();
         }
 
+        public static Cart CreateForCustomer(Guid? customerId)
+        {
+            return new Cart(customerId);
+        }
+        public static Cart CreateForGuest(string guestId)
+        {
+            return new Cart(guestId);
+        }
+
 
         public void AddItem(
             Guid productId,
@@ -50,11 +66,31 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
             ArgumentNullException.ThrowIfNull(quantity);
             ArgumentNullException.ThrowIfNull(availableStock);
 
+            if (productId == Guid.Empty)
+                throw new EShopDomainException("ProductId cannot be empty.");
+
+            var item = _items.FirstOrDefault(
+                x => x.ProductId == productId);
+
+            int finalQuantity = 0;
+            if (item is null)
+            {
+                finalQuantity = Math.Min(quantity.Value, availableStock.Value);
+
+                _items.Add(
+                    new CartItem(
+                        productId: productId,
+                        quantity: new Quantity(finalQuantity)));
+
+                return;
+            }
+
+
             var currentQuantity = _items
                 .FirstOrDefault(x => x.ProductId == productId)?
                 .Quantity.Value ?? 0;
 
-            var finalQuantity = currentQuantity + quantity.Value;
+            finalQuantity = currentQuantity + quantity.Value;
 
             if (finalQuantity > availableStock.Value)
             {
@@ -62,16 +98,8 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
                     "Requested quantity exceeds available stock.");
             }
 
-            var item = _items.FirstOrDefault(
-                x => x.ProductId == productId);
+            item.Increase(quantity);
 
-            if (item is not null)
-            {
-                item.Increase(quantity);
-                return;
-            }
-
-            _items.Add(new CartItem(productId, quantity));
         }
 
         public void RemoveItem(Guid productId)
@@ -92,5 +120,48 @@ namespace _01.Domain.Entities.Aggregates.CartAgg
         {
             _items.Clear();
         }
+
+        public void AssignToCustomer(Guid customerId)
+        {
+            if (customerId == Guid.Empty)
+                throw new EShopDomainException(
+                    "CustomerId cannot be empty.");
+
+            if (CustomerId.HasValue && CustomerId != customerId)
+                throw new InvalidOperationException(
+                    "This cart belongs to another customer.");
+
+            CustomerId = customerId;
+            GuestId = null;
+        }
+
+        //public void MergeItem(
+        //    Guid productId,
+        //    int quantity,
+        //    int availableStock)
+        //{
+        //    if (quantity <= 0 || availableStock <= 0)
+        //        return;
+
+        //    var existingItem = _items
+        //        .FirstOrDefault(x => x.ProductId == productId);
+
+        //    if (existingItem is null)
+        //    {
+        //        _items.Add(
+        //            new CartItem(
+        //                productId: productId,
+        //                new Quantity(Math.Min(quantity, availableStock))));
+
+        //        return;
+        //    }
+
+        //    var mergedQuantity =
+        //        Math.Min(
+        //            existingItem.Quantity.Value + quantity,
+        //            availableStock);
+
+        //    existingItem.ChangeQuantity(new Quantity(mergedQuantity));
+        //}
     }
 }

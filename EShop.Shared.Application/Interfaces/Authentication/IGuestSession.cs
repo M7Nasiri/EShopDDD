@@ -7,5 +7,7 @@ namespace EShop.Shared.Application.Interfaces.Authentication
     public interface IGuestSession
     {
         string GetOrCreateGuestId();
+        string? GetGuestId();
+        void Clear();
     }
 }

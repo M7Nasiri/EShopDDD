@@ -1,4 +1,5 @@
-﻿using _01.Domain.Entities.Aggregates.CartAgg.Repository;
+﻿using _01.Domain.Entities.Aggregates.CartAgg;
+using _01.Domain.Entities.Aggregates.CartAgg.Repository;
 using _01.Domain.Entities.Aggregates.ProductAgg;
 using _01.Domain.Entities.Aggregates.ProductAgg.Repository;
 using _01.Domain.Exceptions;
@@ -12,43 +13,42 @@ using System.Text;
 
 namespace _02.Application.CartAgg.Commands.Clear
 {
-    public class ClearCartCommandHandler : IBaseCommandHandler<ClearCartCommand>
+    public class ClearCartCommandHandler(
+        ICartRepository cartRepository,
+        ICurrentUser currentUser,
+        IUnitOfWork unitOfWork,
+        IGuestSession guestSession)
+        : IBaseCommandHandler<ClearCartCommand>
     {
-        private readonly ICartRepository _cartRepository;
-        private readonly IProductRepository _productRepository;
-        private readonly ICurrentUser _currentUser;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public ClearCartCommandHandler(
-            ICartRepository cartRepository,
-            ICurrentUser currentUser,
-            IUnitOfWork unitOfWork)
-        {
-            _cartRepository = cartRepository;
-            _currentUser = currentUser;
-            _unitOfWork = unitOfWork;
-        }
         public async Task<OperationResult> Handle(ClearCartCommand request, CancellationToken cancellationToken)
         {
-            if (!_currentUser.IsAuthenticated ||
-             _currentUser.UserId is null)
-            {
-                throw new UnauthorizedAccessException(
-                    "User must be authenticated.");
-            }
-
-            var customerId = _currentUser.UserId.Value;
-            var cart = await _cartRepository.GetByCustomerIdAsync(
-                   customerId,
+           
+            var cart = await GetOrCreateCartAsync(
                    cancellationToken);
 
             if (cart is null)
                 throw new EShopNullException("Cart does not exist");
             cart.Clear();
 
-            await _unitOfWork.SaveChangesAsync(
+            await unitOfWork.SaveChangesAsync(
                 cancellationToken);
             return OperationResult.Success();
+        }
+        private async Task<Cart?> GetOrCreateCartAsync(CancellationToken cancellationToken)
+        {
+            if (currentUser.IsValid() && currentUser.UserId.HasValue)
+            {
+                var customerId = currentUser.UserId.Value;
+                var customerCart = await cartRepository.GetByCustomerIdAsync(customerId, cancellationToken);
+
+                return customerCart;
+            }
+
+            var guestId = guestSession.GetOrCreateGuestId();
+            var guestCart = await cartRepository.GetByGuestIdAsync(guestId, cancellationToken);
+
+            return guestCart;
         }
     }
 }

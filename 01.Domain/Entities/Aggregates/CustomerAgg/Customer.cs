@@ -93,7 +93,7 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
             var index = _addresses.IndexOf(existing);
             _addresses[index] = updatedAddress;
 
-            if (DefaultAddress == existing)
+            if (DefaultAddress == existing || DefaultAddress?.PostalCode == postalCode)
             {
                 DefaultAddress = updatedAddress;
             }
