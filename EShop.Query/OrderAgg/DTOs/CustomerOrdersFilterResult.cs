@@ -1,6 +1,6 @@
 ﻿using EShop.Shared.Query.Filter;
 
-namespace EShop.Query.CustomerAgg.DTOs.Orders;
+namespace EShop.Query.OrderAgg.DTOs;
 
 public class CustomerOrdersFilterResult : BaseFilter<CustomerOrderSummaryDto, CustomerOrdersFilterParams>
 {

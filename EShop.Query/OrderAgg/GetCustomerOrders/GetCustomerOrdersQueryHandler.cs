@@ -1,13 +1,13 @@
 ﻿using Dapper;
 using EShop.Infrastructure.Persistent.Dapper;
-using EShop.Query.CustomerAgg.DTOs.Orders;
+using EShop.Query.OrderAgg.DTOs;
 using EShop.Shared.Query;
 using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EShop.Query.CustomerAgg.GetCustomerOrders
+namespace EShop.Query.OrderAgg.GetCustomerOrders
 {
     public class GetCustomerOrdersQueryHandler(DapperContext dapperContext) : IQueryHandler<GetCustomerOrdersQuery, CustomerOrdersFilterResult>
     {
@@ -19,10 +19,18 @@ namespace EShop.Query.CustomerAgg.GetCustomerOrders
 
             var condition = "WHERE o.CustomerId = @CustomerId AND o.IsDelete = 0";
 
-            if (!string.IsNullOrWhiteSpace(filter.OrderStatus))
+            if (filter.OrderStatus.HasValue)
             {
                 condition += " AND o.Status = @Status";
-                dynamicParams.Add("Status", filter.OrderStatus.Trim());
+                dynamicParams.Add("Status", (int)filter.OrderStatus.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+            {
+                condition += @"AND EXISTS (SELECT 1 FROM OrderItems oi
+                                INNER JOIN Products p ON oi.ProductId = p.Id
+                                WHERE oi.OrderId = o.Id AND p.Name LIKE @Search)";
+                dynamicParams.Add("Search", $"%{filter.Search.Trim()}%");
             }
 
             using var connection = dapperContext.CreateConnection();
@@ -40,29 +48,36 @@ namespace EShop.Query.CustomerAgg.GetCustomerOrders
                 -- سفارش‌های صفحه جاری
                 WITH PagedOrders AS (
                     SELECT 
-                        o.Id,
+                        o.Id AS OrderNumber,
                         o.CreationDate,
                         o.Status AS OrderStatus,
-                        o.TotalPaidAmount
+                        ROUND(
+                            (itemsSum.SubTotal * (1.0 - COALESCE(o.MembershipDiscountPercent, o.CouponPercent, 0) / 100.0)) 
+                            + (CASE WHEN o.MembershipFreeShipping = 1 THEN 0 ELSE o.BaseShippingCost END)
+                        , 2) AS TotalPaidAmount
                     FROM Orders o
+                    CROSS APPLY (
+                        SELECT ISNULL(SUM(oi.UnitPrice * oi.Quantity), 0) AS SubTotal
+                        FROM OrderItems oi
+                        WHERE oi.OrderId = o.Id
+                    ) itemsSum
                     {condition}
-                    ORDER BY o.CreationDate DESC
+                    ORDER BY o.CreatedAt DESC
                     OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
                 )
                 SELECT 
                     po.Id,
-                    po.CreationDate,
+                    po.CreatedAt,
                     po.OrderStatus,
                     po.TotalPaidAmount,
                     oi.ProductId,
                     oi.UnitPrice AS PurchasedPrice,
-                    oi.Count,
-                    p.Name As ProductName,
+                    oi.Quantity As Count,
+                    p.Name AS ProductName,
                     p.ImageName AS ProductMainImage
                 FROM PagedOrders po
-                INNER JOIN OrderItems oi ON po.OrderId = oi.OrderId
+                INNER JOIN OrderItems oi ON po.Id = oi.OrderId
                 LEFT JOIN Products p ON oi.ProductId = p.Id;";
-
             var orderDictionary = new Dictionary<Guid, CustomerOrderSummaryDto>();
 
             await connection.QueryAsync<CustomerOrderSummaryDto, OrderHistoryItemDto, CustomerOrderSummaryDto>(
@@ -88,6 +103,7 @@ namespace EShop.Query.CustomerAgg.GetCustomerOrders
 
             var result = new CustomerOrdersFilterResult();
             result.GeneratePaging(totalCount, filter.Take, filter.PageId);
+            result.Data = orderDictionary.Values.ToList();
             return result;
         }
     }

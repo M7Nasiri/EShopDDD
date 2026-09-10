@@ -1,10 +1,10 @@
-﻿using EShop.Query.CustomerAgg.DTOs.Orders;
+﻿using EShop.Query.OrderAgg.DTOs;
 using EShop.Shared.Query;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EShop.Query.CustomerAgg.GetCustomerOrders
+namespace EShop.Query.OrderAgg.GetCustomerOrders
 {
     public class GetCustomerOrdersQuery : QueryFilter<CustomerOrdersFilterResult, CustomerOrdersFilterParams>
     {

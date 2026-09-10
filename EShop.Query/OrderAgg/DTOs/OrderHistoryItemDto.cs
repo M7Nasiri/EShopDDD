@@ -1,4 +1,4 @@
-﻿namespace EShop.Query.CustomerAgg.DTOs.Orders;
+﻿namespace EShop.Query.OrderAgg.DTOs;
 
 public sealed record OrderHistoryItemDto
 {

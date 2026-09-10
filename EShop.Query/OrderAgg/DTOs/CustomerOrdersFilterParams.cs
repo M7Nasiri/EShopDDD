@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using _01.Domain.Consts;
 
-namespace EShop.Query.CustomerAgg.DTOs.Orders
+namespace EShop.Query.OrderAgg.DTOs
 {
     public class CustomerOrdersFilterParams : BaseFilterParam
     {
         public Guid CustomerId { get; set; }
-        public string? OrderStatus { get; set; } // وضعیت سفارش در صورت فیلتر
+        public string? Search { get; set; }
+        public OrderStatus? OrderStatus { get; set; } // وضعیت سفارش در صورت فیلتر
     }
 }
