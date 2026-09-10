@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="CommentAgg\" />
     <Folder Include="CouponAgg\" />
     <Folder Include="MembershipAgg\" />
     <Folder Include="MembershipPlanAgg\" />

@@ -7,15 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EShop.Query.CartAgg.GetCartByCustomerId;
 
-public class GetCartByCustomerIdQueryHandler : IQueryHandler<GetCartByCustomerIdQuery, CartDto?>
+public class GetCartByCustomerIdQueryHandler(DapperContext dapperContext)
+    : IQueryHandler<GetCartByCustomerIdQuery, CartDto?>
 {
-    private readonly DapperContext _dapperContext;
-
-    public GetCartByCustomerIdQueryHandler(DapperContext dapperContext)
-    {
-        _dapperContext = dapperContext;
-    }
-
     public async Task<CartDto?> Handle(GetCartByCustomerIdQuery request, CancellationToken cancellationToken)
     {
         const string sql = @"
@@ -39,7 +33,7 @@ public class GetCartByCustomerIdQueryHandler : IQueryHandler<GetCartByCustomerId
             Left JOIN Products p ON ci.ProductId = p.Id
             WHERE c.CustomerId = @CustomerId  AND c.Status = @ActiveStatus";
 
-        using var connection = _dapperContext.CreateConnection();
+        using var connection = dapperContext.CreateConnection();
 
         var cartDictionary = new Dictionary<Guid, CartDto>();
 
