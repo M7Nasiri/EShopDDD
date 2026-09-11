@@ -5,6 +5,8 @@ using EShop.Query.CommentAgg.GetAllCommentForAdmin;
 using EShop.Query.CommentAgg.GetApprovedCommentForProduct;
 using EShop.Query.CommentAgg.GetCommentForCustomer;
 using EShop.Query.CommentAgg.GetWhoApprovedComment;
+using EShop.Query.CouponAgg.DTOs;
+using EShop.Query.CouponAgg.GetCouponsForAdmin;
 using EShop.Query.OrderAgg.DTOs;
 using EShop.Query.OrderAgg.GetCustomersOrdersForAdmin;
 using MediatR;
@@ -92,13 +94,27 @@ namespace EShop.WebAPI.Controllers
         //    }
         //    return Ok(result);
         //}
-        [HttpGet("{commentId:guid?}")]
-        public async Task<ActionResult<WhoApprovedCommentDto>> GetAllOrders(
-            [FromRoute] Guid commentId,
+        //[HttpGet("{commentId:guid?}")]
+        //public async Task<ActionResult<WhoApprovedCommentDto>> GetAllOrders(
+        //    [FromRoute] Guid commentId,
+        //    CancellationToken cancellationToken)
+        //{
+
+        //    var result = await _mediator.Send(new GetWhoApprovedCommentQuery(commentId), cancellationToken);
+        //    if (result == null)
+        //    {
+        //        return NotFound(new { message = "سفارشی یافت نشد." });
+        //    }
+        //    return Ok(result);
+        //}
+
+        [HttpGet()]
+        public async Task<ActionResult<CouponAdminSummaryDto>> GetAllOrders(
+            [FromQuery] CouponFilterParams filterParams,
             CancellationToken cancellationToken)
         {
 
-            var result = await _mediator.Send(new GetWhoApprovedCommentQuery(commentId), cancellationToken);
+            var result = await _mediator.Send(new GetCouponsForAdminQuery(filterParams), cancellationToken);
             if (result == null)
             {
                 return NotFound(new { message = "سفارشی یافت نشد." });
