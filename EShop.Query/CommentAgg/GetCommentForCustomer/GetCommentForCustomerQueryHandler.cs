@@ -6,15 +6,21 @@ using EShop.Shared.Query;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using _01.Domain.Exceptions;
+using EShop.Shared.Application.Interfaces.Authentication;
 
 namespace EShop.Query.CommentAgg.GetCommentForCustomer
 {
-    public class GetCommentForCustomerQueryHandler(DapperContext context) : IQueryHandler<GetCommentForCustomerQuery,CommentCustomerFilterResult>
+    public class GetCommentForCustomerQueryHandler(DapperContext context,ICurrentUser currentUser) : IQueryHandler<GetCommentForCustomerQuery,CommentCustomerFilterResult>
     {
         public async Task<CommentCustomerFilterResult> Handle(GetCommentForCustomerQuery request, CancellationToken cancellationToken)
         {
+            if (currentUser.UserId != request.CustomerId)
+                throw new EShopDomainException("You don't have access!");
+
             var filter = request.FilterParams;
             var dynamicParams = new DynamicParameters();
+
 
             var whereConditions = new StringBuilder("WHERE pc.CustomerId=@CustomerId And pc.IsDelete = 0");
             dynamicParams.Add("CustomerId", request.CustomerId);
