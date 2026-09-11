@@ -45,7 +45,6 @@ namespace EShop.Query.OrderAgg.GetCustomerOrders
             dynamicParams.Add("Take", filter.Take);
 
             var sql = $@"
-                -- سفارش‌های صفحه جاری
                 WITH PagedOrders AS (
                     SELECT 
                         o.Id AS OrderNumber,

@@ -18,7 +18,6 @@ namespace EShop.Query.OrderAgg.GetCustomersOrdersForAdmin
         {
             var filter = request.FilterParams;
             var dynamicParams = new DynamicParameters();
-            dynamicParams.Add("CustomerId", filter.CustomerId);
 
             var condition = "WHERE o.IsDelete = 0";
 
@@ -54,39 +53,38 @@ namespace EShop.Query.OrderAgg.GetCustomersOrdersForAdmin
             dynamicParams.Add("Take", filter.Take);
 
             var sql = $@"
-    -- سفارش‌های صفحه جاری
-    WITH PagedOrders AS (
-        SELECT 
-            o.Id,
-            o.CreationDate,
-            o.Status AS OrderStatus,
-            ROUND(
-                (itemsSum.SubTotal * (1.0 - COALESCE(o.MembershipDiscountPercent, o.CouponPercent, 0) / 100.0)) 
-                + (CASE WHEN o.MembershipFreeShipping = 1 THEN 0 ELSE o.BaseShippingCost END)
-            , 2) AS TotalPaidAmount
-        FROM Orders o
-        CROSS APPLY (
-            SELECT ISNULL(SUM(oi.UnitPrice * oi.Quantity), 0) AS SubTotal
-            FROM OrderItems oi
-            WHERE oi.OrderId = o.Id
-        ) itemsSum
-        {condition}
-        ORDER BY o.CreatedAt DESC
-        OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
-    )
-    SELECT 
-        po.Id,
-        po.CreationDate,
-        po.OrderStatus,
-        po.TotalPaidAmount,
-        oi.ProductId,
-        oi.UnitPrice AS PurchasedPrice,
-        oi.Quantity As Count,
-        p.Name AS ProductName,
-        p.ImageName AS ProductMainImage
-    FROM PagedOrders po
-    INNER JOIN OrderItems oi ON po.Id = oi.OrderId
-    LEFT JOIN Products p ON oi.ProductId = p.Id;";
+                WITH PagedOrders AS (
+                    SELECT 
+                        o.Id,
+                        o.CreationDate,
+                        o.Status AS OrderStatus,
+                        ROUND(
+                            (itemsSum.SubTotal * (1.0 - COALESCE(o.MembershipDiscountPercent, o.CouponPercent, 0) / 100.0)) 
+                            + (CASE WHEN o.MembershipFreeShipping = 1 THEN 0 ELSE o.BaseShippingCost END)
+                        , 2) AS TotalPaidAmount
+                    FROM Orders o
+                    CROSS APPLY (
+                        SELECT ISNULL(SUM(oi.UnitPrice * oi.Quantity), 0) AS SubTotal
+                        FROM OrderItems oi
+                        WHERE oi.OrderId = o.Id
+                    ) itemsSum
+                    {condition}
+                    ORDER BY o.CreatedAt DESC
+                    OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY
+                )
+                SELECT 
+                    po.Id,
+                    po.CreationDate,
+                    po.OrderStatus,
+                    po.TotalPaidAmount,
+                    oi.ProductId,
+                    oi.UnitPrice AS PurchasedPrice,
+                    oi.Quantity As Count,
+                    p.Name AS ProductName,
+                    p.ImageName AS ProductMainImage
+                FROM PagedOrders po
+                INNER JOIN OrderItems oi ON po.Id = oi.OrderId
+                LEFT JOIN Products p ON oi.ProductId = p.Id;";
 
             var orderDictionary = new Dictionary<Guid, CustomerOrderSummaryDto>();
 

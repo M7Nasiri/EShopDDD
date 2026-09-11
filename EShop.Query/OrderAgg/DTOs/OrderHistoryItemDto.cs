@@ -3,9 +3,9 @@
 public sealed record OrderHistoryItemDto
 {
     public Guid ProductId { get; init; }
-    public string ProductName { get; init; } = default!; // نام ثبت شده در سفارش
-    public decimal PurchasedPrice { get; init; }          // قیمت زمان خرید
+    public string? ProductName { get; init; } 
+    public decimal PurchasedPrice { get; init; }         
     public int Count { get; init; }
-    public string? ProductMainImage { get; init; }        // تصویر از جدول کالا
+    public string? ProductMainImage { get; init; }        
     public decimal TotalPrice => PurchasedPrice * Count;
 }
