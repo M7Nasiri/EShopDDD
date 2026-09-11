@@ -1,8 +1,9 @@
 ﻿using _01.Domain.Exceptions;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.ValueObjects
 {
-    public record MembershipDuration
+    public record MembershipDuration : ValueObject
     {
         public int Days { get; }
 

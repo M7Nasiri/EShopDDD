@@ -3,34 +3,83 @@ using _01.Domain.Entities.Aggregates.CustomerAgg.Repository;
 using _01.Domain.ValueObjects;
 using EShop.Shared.Application;
 using EShop.Shared.Application.Interfaces.Authentication;
+using EShop.Shared.Application.Interfaces.Persistence;
+using Microsoft.Extensions.Logging;
+
 
 namespace _02.Application.CustomerAgg.Commands.RegisterCustomer
 {
-    public class RegisterCustomerCommandHandler : IBaseCommandHandler<RegisterCustomerCommand>
+    public class RegisterCustomerCommandHandler(
+        IIdentityService identityService,
+        ICustomerRepository customerRepository,
+        IUnitOfWork unitOfWork, 
+        ILogger<RegisterCustomerCommandHandler> logger)
+        : IBaseCommandHandler<RegisterCustomerCommand>
     {
-        private readonly IIdentityService _identityService;
-        private readonly ICustomerRepository _customerRepository;
-
-        public RegisterCustomerCommandHandler(
-            IIdentityService identityService,
-            ICustomerRepository customerRepository)
-        {
-            _identityService = identityService;
-            _customerRepository = customerRepository;
-        }
-
-
         public async Task<OperationResult> Handle(RegisterCustomerCommand request, CancellationToken cancellationToken)
         {
-            var userId = await _identityService.RegisterCustomerAsync(
-                request.UserName, request.Email, request.Password, request.Name, request.Family);
+            Guid? createdUserId = null;
 
-            var fullName = $"{request.Name} {request.Family}";
-            var customer = new Customer(userId, new Name(fullName));
-            await _customerRepository.AddAsync(customer, cancellationToken);
-            await _customerRepository.Save();
+            
+            var fullName =new Name($"{request.Name} {request.Family}".Trim());
 
-            return OperationResult.Success();
+            var phoneNumber = new PhoneNumber(
+                request.PhoneNumber);
+
+            var email = new Email(
+                request.Email);
+            try
+            {
+                createdUserId =
+                    await identityService.RegisterCustomerAsync(
+                        userName: request.UserName,
+                        email: email.Value,
+                        phoneNumber: phoneNumber.Value,
+                        password: request.Password,
+                        firstName: request.Name,
+                        lastName: request.Family);
+
+                var customer = new Customer(
+                    id: createdUserId.Value,
+                    fullName: fullName,
+                    phoneNumber: phoneNumber,
+                    email: email);
+
+                await customerRepository.AddAsync(
+                    customer,
+                    cancellationToken);
+
+                await unitOfWork.SaveChangesAsync(
+                    cancellationToken);
+
+                return OperationResult.Success();
+            }
+            catch (Exception originalException)
+            {
+                if (createdUserId.HasValue)
+                {
+                    try
+                    {
+                        await identityService.DeleteUserAsync(
+                            createdUserId.Value);
+                        logger.LogWarning(
+                            originalException,
+                            $"ثبت بیزینسی مشتری با خطا مواجه شد. کاربر Identity با شناسه {createdUserId} با موفقیت به‌صورت جبرانی حذف شد.",
+                            createdUserId.Value);
+
+                    }
+                    catch (Exception compensationException)
+                    {
+                        logger.LogCritical(
+                            compensationException,
+                            "خطای بحرانی در فرآیند جبرانی! کاربر در IdentityDb با شناسه {createdUserId} ایجاد شد اما در دیتابیس اصلی ذخیره نشد و حذف جبرانی نیز با شکست روبرو گردید. خطای اصلی: {OriginalError}",
+                            createdUserId.Value,
+                            originalException.Message);
+                    }
+                }
+
+                throw;
+            }
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using _01.Domain.Exceptions;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.ValueObjects
 {
-    public sealed record ProductAttribute
+    public sealed record ProductAttribute : ValueObject
     {
         public string Key { get; }
         public string Value { get; }

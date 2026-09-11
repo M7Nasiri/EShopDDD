@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using EShop.Shared.Application.Exceptions;
 
 namespace EShop.Infrastructure.Identity.Services
 {
@@ -21,6 +22,7 @@ namespace EShop.Infrastructure.Identity.Services
         public async Task<Guid> RegisterCustomerAsync(
             string userName,
             string email,
+            string phoneNumber,
             string password,
             string? firstName,
             string? lastName)
@@ -28,6 +30,7 @@ namespace EShop.Infrastructure.Identity.Services
             var user = new AppUser(
                 userName,
                 email,
+                phoneNumber,
                 firstName,
                 lastName);
 
@@ -57,6 +60,30 @@ namespace EShop.Infrastructure.Identity.Services
                 throw new InvalidOperationException(errors);
             }
             return user.Id;
+        }
+
+        public async Task DeleteUserAsync(Guid userId)
+        {
+            if (userId == Guid.Empty)
+                return;
+
+            var user = await _userManager.FindByIdAsync(
+                userId.ToString());
+
+            // حذف جبرانی را Idempotent می‌کنیم:
+            // اگر قبلاً حذف شده باشد، عملیات موفق تلقی می‌شود.
+            if (user is null)
+                return;
+
+            var deleteResult = await _userManager.DeleteAsync(user);
+
+            if (!deleteResult.Succeeded)
+            {
+                var errors = string.Join(
+                    " | ",
+                    deleteResult.Errors.Select(x => x.Description));
+                throw new EShopIdentityException(errors);
+            }
         }
 
         public async Task<Guid?> ValidateUserAsync(

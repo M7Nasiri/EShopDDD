@@ -1,8 +1,9 @@
 ﻿using _01.Domain.Exceptions;
+using EShop.Shared.Domain;
 
 namespace _01.Domain.ValueObjects
 {
-    public sealed record DiscountSnapshot
+    public sealed record DiscountSnapshot : ValueObject
     {
         public string Reason { get; }
         public int Percent { get; }

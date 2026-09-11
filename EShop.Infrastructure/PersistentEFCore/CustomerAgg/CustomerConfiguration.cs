@@ -23,10 +23,35 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
                 .HasMaxLength(200)
                 .IsRequired();
 
+
+            builder.Property(c => c.PhoneNumber)
+                .HasConversion(
+                    phoneNumber => phoneNumber.Value,
+                    value => new PhoneNumber(value))
+                .HasColumnName("PhoneNumber")
+                .HasMaxLength(20)
+                .IsRequired();
+
+            builder.Property(c => c.Email)
+                .HasConversion(
+                    email => email.Value,
+                    value => new Email(value))
+                .HasColumnName("Email")
+                .HasMaxLength(256)
+                .IsRequired();
+
+
             builder.Navigation(c => c.Addresses)
                .HasField("_addresses")
                .UsePropertyAccessMode(PropertyAccessMode.Field);
 
+            builder.HasIndex(c => c.PhoneNumber)
+                .IsUnique()
+                .HasDatabaseName("UX_Customers_PhoneNumber");
+
+            builder.HasIndex(c => c.Email)
+                .IsUnique()
+                .HasDatabaseName("UX_Customers_Email");
 
             // ۴. نگاشت لیست آدرس‌ها (Owned Collection)
             builder.OwnsMany(c => c.Addresses, a =>

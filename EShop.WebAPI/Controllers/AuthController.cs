@@ -32,6 +32,7 @@ public sealed class AuthController : ControllerBase
         var userId = await _identityService.RegisterCustomerAsync(
             request.UserName,
             request.Email,
+            request.PhoneNumber,
             request.Password,
             request.FirstName,
             request.LastName);

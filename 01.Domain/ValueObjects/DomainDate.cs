@@ -1,6 +1,8 @@
-﻿namespace _01.Domain.ValueObjects
+﻿using EShop.Shared.Domain;
+
+namespace _01.Domain.ValueObjects
 {
-    public sealed record DomainDate
+    public sealed record DomainDate : ValueObject
     {
         public DateTime Value { get; }
 

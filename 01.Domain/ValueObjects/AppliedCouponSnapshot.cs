@@ -1,7 +1,8 @@
 ﻿using _01.Domain.Exceptions;
+using EShop.Shared.Domain;
 namespace _01.Domain.ValueObjects
 {
-    public sealed record AppliedCouponSnapshot
+    public sealed record AppliedCouponSnapshot : ValueObject
     {
         public Guid CouponId { get; }
         public string Code { get; }

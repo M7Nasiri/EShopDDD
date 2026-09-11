@@ -6,6 +6,6 @@ using System.Text;
 namespace _02.Application.CustomerAgg.Commands.RegisterCustomer
 {
     public sealed record RegisterCustomerCommand(string UserName, string Name, string Family,
-        string Email, string Password) : IBaseCommand;
+        string Email,string PhoneNumber, string Password) : IBaseCommand;
 
 }

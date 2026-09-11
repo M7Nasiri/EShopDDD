@@ -1,7 +1,8 @@
 ﻿using _01.Domain.Exceptions;
+using EShop.Shared.Domain;
 namespace _01.Domain.ValueObjects
 {
-    public sealed record Address
+    public sealed record Address : ValueObject
     {
         public string ReceiverName { get; }
         public string PhoneNumber { get; }

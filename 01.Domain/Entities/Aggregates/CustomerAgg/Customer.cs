@@ -16,6 +16,9 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
         public IReadOnlyCollection<Address> Addresses =>
             _addresses.AsReadOnly();
 
+        public PhoneNumber PhoneNumber { get; private set; } 
+        public Email Email { get; private set; }
+
         public Address? DefaultAddress { get; private set; }
 
         private Customer()
@@ -24,7 +27,7 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
 
         public Customer(
             Guid id,
-            Name fullName)
+            Name fullName,PhoneNumber phoneNumber,Email email)
         {
             ArgumentNullException.ThrowIfNull(fullName);
 
@@ -97,6 +100,18 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
             {
                 DefaultAddress = updatedAddress;
             }
+        }
+
+        public void ChangePhoneNumber(PhoneNumber phoneNumber)
+        {
+            ArgumentNullException.ThrowIfNull(phoneNumber);
+            PhoneNumber = phoneNumber;
+        }
+
+        public void ChangeEmail(Email email)
+        {
+            ArgumentNullException.ThrowIfNull(email);
+            Email = email;
         }
     }
 }
