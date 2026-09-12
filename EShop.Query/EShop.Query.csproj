@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="ShipmentAgg\" />
     <Folder Include="ProductAgg\" />
-    <Folder Include="PaymentAgg\" />
   </ItemGroup>
 
   <ItemGroup>

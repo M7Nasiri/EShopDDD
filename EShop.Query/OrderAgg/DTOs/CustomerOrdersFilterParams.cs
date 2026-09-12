@@ -10,6 +10,6 @@ namespace EShop.Query.OrderAgg.DTOs
     {
         public Guid CustomerId { get; set; }
         public string? Search { get; set; }
-        public OrderStatus? OrderStatus { get; set; } // وضعیت سفارش در صورت فیلتر
+        public OrderStatus? OrderStatus { get; set; } 
     }
 }
