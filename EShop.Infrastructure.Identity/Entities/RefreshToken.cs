@@ -7,7 +7,6 @@ public sealed class RefreshToken
 {
     public Guid Id { get; private set; }
 
-    // Hash خود Refresh Token، نه مقدار خام آن
     public string TokenHash { get; private set; }
 
     public DateTimeOffset ExpiresAtUtc { get; private set; }
@@ -16,9 +15,7 @@ public sealed class RefreshToken
 
     public DateTimeOffset? RevokedAtUtc { get; private set; }
 
-    // برای Token Rotation:
-    // وقتی یک Refresh Token استفاده می‌شود، توکن قبلی revoke
-    // و توکن جدید ساخته می‌شود.
+
     public string? ReplacedByTokenHash { get; private set; }
 
     public string? CreatedByIp { get; private set; }
@@ -31,7 +28,7 @@ public sealed class RefreshToken
 
     private RefreshToken()
     {
-        // For EF Core
+
     }
 
     public RefreshToken(

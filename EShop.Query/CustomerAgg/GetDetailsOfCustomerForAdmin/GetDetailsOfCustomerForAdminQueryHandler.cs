@@ -10,10 +10,10 @@ using Microsoft.EntityFrameworkCore;
 namespace EShop.Query.CustomerAgg.GetDetailsOfCustomerForAdmin
 {
     public class GetDetailsOfCustomerForAdminQueryHandler(ShopContext context) :
-        IQueryHandler<GetDetailsOfCustomerForAdminQuery, CustomerDetailsForAdminDto>
+        IQueryHandler<GetDetailsOfCustomerForAdminQuery, CustomerDetailsForAdminDto?>
     {
 
-        public async Task<CustomerDetailsForAdminDto> Handle(GetDetailsOfCustomerForAdminQuery request, CancellationToken cancellationToken)
+        public async Task<CustomerDetailsForAdminDto?> Handle(GetDetailsOfCustomerForAdminQuery request, CancellationToken cancellationToken)
         {
             return await context.Customers
                 .AsNoTracking()

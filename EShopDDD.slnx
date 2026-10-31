@@ -7,6 +7,7 @@
   </Folder>
   <Project Path="01.Domain/01.Domain.csproj" />
   <Project Path="02.Application/02.Application.csproj" Id="bddeff17-343b-414f-a218-c4155f2ba531" />
+  <Project Path="EShop.Facade/EShop.Facade.csproj" Id="1d233544-bc01-485a-9f1f-8128fdfa625b" />
   <Project Path="EShop.Infrastructure.Identity/EShop.Infrastructure.Identity.csproj" Id="01994450-a4d8-4872-959e-54b4f552292e" />
   <Project Path="EShop.Infrastructure/EShop.Infrastructure.csproj" Id="1f31c37a-abc5-4a07-ad83-6d9a9841c007" />
   <Project Path="EShop.Query/EShop.Query.csproj" Id="1188c9cc-3002-425f-b86b-cdd9f3aadf9c" />

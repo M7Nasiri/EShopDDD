@@ -6,6 +6,6 @@ using System.Text;
 
 namespace EShop.Query.CustomerAgg.GetDetailsOfCustomerForAdmin
 {
-    public sealed record GetDetailsOfCustomerForAdminQuery(Guid CustomerId)
+    public record GetDetailsOfCustomerForAdminQuery(Guid CustomerId)
         : IQuery<CustomerDetailsForAdminDto?>;
 }

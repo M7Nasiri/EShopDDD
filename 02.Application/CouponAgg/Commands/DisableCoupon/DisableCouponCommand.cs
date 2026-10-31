@@ -5,5 +5,5 @@ using System.Text;
 
 namespace _02.Application.CouponAgg.Commands.DisableCoupon
 {
-    public sealed record EnableCouponCommand(Guid CouponId) : IBaseCommand; 
+    public sealed record DisableCouponCommand(Guid CouponId) : IBaseCommand; 
 }

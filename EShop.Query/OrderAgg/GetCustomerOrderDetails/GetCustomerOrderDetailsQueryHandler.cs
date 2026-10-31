@@ -65,6 +65,9 @@ namespace EShop.Query.OrderAgg.GetCustomerOrderDetails
             if (orderHeader is null)
                 throw new EShopDomainException("The order was not found!");
 
+            if (orderHeader.OrderId != request.OrderId)
+                throw new EShopDomainException("This order is not for you!");
+
             var items = (await multi.ReadAsync<CustomerOrderItemDetailDto>()).ToList();
 
             var address = new CustomerShippingAddressDto(

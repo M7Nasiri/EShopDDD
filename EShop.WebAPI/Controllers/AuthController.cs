@@ -110,7 +110,7 @@ public sealed class AuthController : ControllerBase
                 HttpContext.RequestAborted);
         }
 
-        // پاک کردن کوکی از مرورگر
+
         DeleteRefreshTokenCookie();
 
         return NoContent();
@@ -118,7 +118,7 @@ public sealed class AuthController : ControllerBase
 
     #region Helper Methods
 
-    // متد ست کردن کوکی
+ 
     private void SetRefreshTokenCookie(string refreshToken, DateTimeOffset expiresAtUtc)
     {
         var cookieOptions = new CookieOptions
@@ -134,7 +134,7 @@ public sealed class AuthController : ControllerBase
         Response.Cookies.Append(RefreshTokenCookieName, refreshToken, cookieOptions);
     }
 
-    // متد حذف کوکی هنگام لاگ‌اوت
+
     private void DeleteRefreshTokenCookie()
     {
         Response.Cookies.Delete(RefreshTokenCookieName, new CookieOptions

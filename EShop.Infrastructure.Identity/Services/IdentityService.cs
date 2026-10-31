@@ -70,8 +70,6 @@ namespace EShop.Infrastructure.Identity.Services
             var user = await _userManager.FindByIdAsync(
                 userId.ToString());
 
-            // حذف جبرانی را Idempotent می‌کنیم:
-            // اگر قبلاً حذف شده باشد، عملیات موفق تلقی می‌شود.
             if (user is null)
                 return;
 

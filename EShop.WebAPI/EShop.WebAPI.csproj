@@ -26,4 +26,8 @@
     <ProjectReference Include="..\Shop.Config\Shop.Config.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\Admin\" />
+  </ItemGroup>
+
 </Project>

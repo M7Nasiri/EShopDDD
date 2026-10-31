@@ -63,7 +63,8 @@ namespace EShop.Query.OrderAgg.GetAdminOrderDetails
             INNER JOIN Products p ON p.Id = oi.ProductId
             WHERE oi.OrderId = @OrderId;";
 
-            using var multi = await connection.QueryMultipleAsync(sql, new { request.OrderId });
+            using var multi = 
+                await connection.QueryMultipleAsync(sql, new { request.OrderId });
 
             var header = await multi.ReadFirstOrDefaultAsync<dynamic>();
             if (header is null)

@@ -5,12 +5,12 @@ using EShop.Shared.Application.Interfaces.Persistence;
 
 namespace _02.Application.CouponAgg.Commands.DisableCoupon
 {
-    public class EnableCouponCommandHandler : IBaseCommandHandler<EnableCouponCommand>
+    public class DisableCouponCommandHandler : IBaseCommandHandler<DisableCouponCommand>
     {
         private readonly ICouponRepository _couponRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public EnableCouponCommandHandler(
+        public DisableCouponCommandHandler(
            ICouponRepository couponRepository,
             IUnitOfWork unitOfWork)
         {
@@ -18,7 +18,7 @@ namespace _02.Application.CouponAgg.Commands.DisableCoupon
             _unitOfWork = unitOfWork;
 
         }
-        public async Task<OperationResult> Handle(EnableCouponCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult> Handle(DisableCouponCommand request, CancellationToken cancellationToken)
         {
             var coupon = await _couponRepository.GetTracking(request.CouponId, cancellationToken);
             if (coupon == null)
