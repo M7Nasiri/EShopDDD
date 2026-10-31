@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\01.Domain\01.Domain.csproj" />
     <ProjectReference Include="..\02.Application\02.Application.csproj" />
+    <ProjectReference Include="..\EShop.Facade\EShop.Facade.csproj" />
     <ProjectReference Include="..\EShop.Infrastructure.Identity\EShop.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\EShop.Infrastructure\EShop.Infrastructure.csproj" />
     <ProjectReference Include="..\EShop.Query\EShop.Query.csproj" />
