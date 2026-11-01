@@ -15,6 +15,15 @@ public interface IIdentityService
         string? firstName,
         string? lastName);
 
+    Task<Guid> RegisterModeratorAsync(
+        string userName,
+        string email,
+        string phoneNumber,
+        string password,
+        string? firstName,
+        string? lastName);
+
+
     Task DeleteUserAsync(Guid userId);
 
     Task<Guid?> ValidateUserAsync(

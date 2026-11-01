@@ -40,7 +40,7 @@ namespace EShop.Query.CommentAgg.GetAllCommentForAdmin
             if (filter.CustomerId.HasValue)
             {
                 whereConditions.Append(" AND pc.CustomerId = @CustomerId");
-                dynamicParams.Add("ProductId", filter.CustomerId.Value);
+                dynamicParams.Add("CustomerId", filter.CustomerId.Value);
             }
 
             if (!string.IsNullOrWhiteSpace(filter.Search))

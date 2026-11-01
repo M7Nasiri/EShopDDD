@@ -34,7 +34,7 @@ public class GetCartByGuestIdQueryHandler : IQueryHandler<GetCartByGuestIdQuery,
             FROM Carts c
             LEFT JOIN CartItems ci ON c.Id = ci.CartId
             LEFT JOIN Products p ON ci.ProductId = p.Id
-            WHERE c.GuestId = @GuestId";
+            WHERE c.GuestId = @GuestId AND c.Status = @ActiveStatus";
 
 
         using var connection = _dapperContext.CreateConnection();
@@ -59,7 +59,7 @@ public class GetCartByGuestIdQueryHandler : IQueryHandler<GetCartByGuestIdQuery,
 
                 return currentCart;
             },
-            param: new { GuestId = request.GuestId },
+            param: new { GuestId = request.GuestId, ActiveStatus = 1 },
             splitOn: "Id"
         );
 

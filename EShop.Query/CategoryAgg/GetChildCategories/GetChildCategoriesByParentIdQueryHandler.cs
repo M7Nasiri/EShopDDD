@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using EShop.Shared.Query;
 
 namespace EShop.Query.CategoryAgg.GetChildCategories
 {
-    public class GetChildCategoriesByParentIdQueryHandler
+    public class GetChildCategoriesByParentIdQueryHandler : IQueryHandler<GetChildCategoriesByParentIdQuery, List<CategoryDto>>
     {
         private readonly ShopContext _context;
 

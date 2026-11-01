@@ -16,7 +16,6 @@ namespace _02.Application.CartAgg.Commands.RemoveItem
     public class RemoveItemCommandHandler(
         ICartRepository cartRepository,
         ICurrentUser currentUser,
-        IProductRepository productRepository,
         IGuestSession guestSession,
         IUnitOfWork unitOfWork)
         : IBaseCommandHandler<RemoveItemCommand>
@@ -27,23 +26,12 @@ namespace _02.Application.CartAgg.Commands.RemoveItem
 
         public async Task<OperationResult> Handle(RemoveItemCommand request, CancellationToken cancellationToken)
         {
-            
-            var productId = request.ProductId;
-
-            // 1) محصول را می‌خوانیم
-            var product = await productRepository.GetAsync(
-                productId,
-                cancellationToken);
-
-            if (product is null)
-                throw new EShopNullException("Product was not found.");
-
             var cart = await GetOrCreateCartAsync(
                     cancellationToken);
 
             if (cart is null)
                 throw new EShopNullException("Cart does not exist");
-            cart?.RemoveItem(productId);
+            cart?.RemoveItem(request.ProductId);
 
             // EF Core تغییرات Aggregate را Track کرده است
             await unitOfWork.SaveChangesAsync(

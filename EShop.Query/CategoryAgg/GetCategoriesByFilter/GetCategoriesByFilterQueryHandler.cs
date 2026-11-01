@@ -41,6 +41,10 @@ namespace EShop.Query.CategoryAgg.GetCategoriesByFilter
             var count = await query.CountAsync(cancellationToken);
             result.GeneratePaging(count, @params.Take, @params.PageId);
 
+            if (@params.PageId <= 0)
+                @params.PageId = 1;
+            if (@params.Take <- 0)
+                @params.Take = 10;
 
             var skip = (@params.PageId - 1) * @params.Take;
             result.Data = await query

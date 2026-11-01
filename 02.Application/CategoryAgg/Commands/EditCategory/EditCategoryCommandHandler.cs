@@ -48,7 +48,7 @@ namespace _02.Application.CategoryAgg.Commands.EditCategory
                     request.ParentCategoryId;
             }
 
-            if (category.ParentCategoryId == parentCategoryId)
+            if (category.ParentCategoryId == category.Id)
                 throw new EShopDomainException("Category cannot be it's own parent");
 
             category.ChangeParent(parentCategoryId);

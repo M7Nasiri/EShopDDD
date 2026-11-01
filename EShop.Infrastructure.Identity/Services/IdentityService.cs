@@ -61,6 +61,48 @@ namespace EShop.Infrastructure.Identity.Services
             }
             return user.Id;
         }
+        public async Task<Guid> RegisterModeratorAsync(
+            string userName,
+            string email,
+            string phoneNumber,
+            string password,
+            string? firstName,
+            string? lastName)
+        {
+            var user = new AppUser(
+                userName,
+                email,
+                phoneNumber,
+                firstName,
+                lastName);
+
+            var createResult = await _userManager.CreateAsync(
+                user,
+                password);
+
+            if (!createResult.Succeeded)
+            {
+                var errors = string.Join(
+                    " | ",
+                    createResult.Errors.Select(x => x.Description));
+
+                throw new InvalidOperationException(errors);
+            }
+
+            var roleResult = await _userManager.AddToRoleAsync(
+                user,
+                Roles.Moderator);
+
+            if (!roleResult.Succeeded)
+            {
+                var errors = string.Join(
+                    " | ",
+                    roleResult.Errors.Select(x => x.Description));
+
+                throw new InvalidOperationException(errors);
+            }
+            return user.Id;
+        }
 
         public async Task DeleteUserAsync(Guid userId)
         {

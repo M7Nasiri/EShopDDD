@@ -25,11 +25,34 @@ public sealed class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(
+    [HttpPost("user")]
+    public async Task<IActionResult> RegisterUser(
         [FromBody] RegisterRequest request)
     {
         var userId = await _identityService.RegisterCustomerAsync(
+            request.UserName,
+            request.Email,
+            request.PhoneNumber,
+            request.Password,
+            request.FirstName,
+            request.LastName);
+
+        var tokens = await _tokenService.CreateTokensAsync(
+            userId,
+            GetIpAddress(),
+            HttpContext.RequestAborted);
+
+        SetRefreshTokenCookie(tokens.RefreshToken, tokens.RefreshTokenExpiresAtUtc);
+
+        return Ok(new AuthResponse(tokens.AccessToken, tokens.AccessTokenExpiresAtUtc));
+    }
+
+    [Authorize(Roles="Admin")]
+    [HttpPost("moderator")]
+    public async Task<IActionResult> RegisterModerator(
+        [FromBody] RegisterRequest request)
+    {
+        var userId = await _identityService.RegisterModeratorAsync(
             request.UserName,
             request.Email,
             request.PhoneNumber,

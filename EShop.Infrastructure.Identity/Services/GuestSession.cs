@@ -16,7 +16,10 @@ namespace EShop.Infrastructure.Identity.Services
         {
             _httpContextAccessor = httpContextAccessor;
         }
-
+        public string? GetGuestId()
+        {
+            return _httpContextAccessor.HttpContext?.Request.Cookies[Consts.GuestId];
+        }
         public string GetOrCreateGuestId()
         {
             var httpContext = _httpContextAccessor.HttpContext
@@ -37,7 +40,7 @@ namespace EShop.Infrastructure.Identity.Services
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false,
+                    Secure = true,
                     SameSite = SameSiteMode.Lax,
                     IsEssential = true,
                     Expires = DateTimeOffset.UtcNow.AddDays(30)
@@ -45,10 +48,7 @@ namespace EShop.Infrastructure.Identity.Services
 
             return guestId;
         }
-        public string? GetGuestId()
-        {
-            return _httpContextAccessor.HttpContext?.Request.Cookies[Consts.GuestId];
-        }
+       
 
         public void Clear()
         {

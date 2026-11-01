@@ -6,5 +6,5 @@ using System.Text;
 
 namespace EShop.Query.CategoryAgg.GetById
 {
-    public record GetCategoryByIdQuery(Guid CategoryId) : IQuery<CategoryDto>;
+    public record GetCategoryByIdQuery(Guid CategoryId) : IQuery<CategoryDto?>;
 }

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Text;
 using EShop.Query.CartAgg.GetCartByFilter;
 using EShop.Query.CartAgg.GetCartByGuestId;
+using EShop.Query.CartAgg.GetCurrent;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace EShop.Facade.Cart
@@ -28,6 +29,8 @@ namespace EShop.Facade.Cart
         Task<CartDto?> GetByCustomerId(Guid CustomerId);
         Task<CartFilterResult> GetByFilter(CartFilterParam filterParams);
         Task<CartDto?> GetByGuestId(string GuestId);
+
+        Task<CartDto?> GetCurrent();
     }
 
 
@@ -60,9 +63,9 @@ namespace EShop.Facade.Cart
             return await _mediator.Send(command);
         }
 
-        public async Task<CartDto?> GetByCustomerId(Guid CustomerId)
+        public async Task<CartDto?> GetByCustomerId(Guid customerId)
         {
-            return await _mediator.Send(new GetCartByCustomerIdQuery(CustomerId));
+            return await _mediator.Send(new GetCartByCustomerIdQuery(customerId));
         }
 
         public async Task<CartFilterResult> GetByFilter(CartFilterParam filterParams)
@@ -70,9 +73,14 @@ namespace EShop.Facade.Cart
             return await _mediator.Send(new GetCartsByFilterQuery(filterParams));
         }
 
-        public async Task<CartDto?> GetByGuestId(string GuestId)
+        public async Task<CartDto?> GetByGuestId(string guestId)
         {
-            return await _mediator.Send(new GetCartByGuestIdQuery(GuestId));
+            return await _mediator.Send(new GetCartByGuestIdQuery(guestId));
+        }
+
+        public async Task<CartDto?> GetCurrent()
+        {
+            return await _mediator.Send(new GetCurrentQuery());
         }
     }
 }

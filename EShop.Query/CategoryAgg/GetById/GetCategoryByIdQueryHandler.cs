@@ -8,7 +8,7 @@ using System.Text;
 
 namespace EShop.Query.CategoryAgg.GetById
 {
-    public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryDto>
+    public class GetCategoryByIdQueryHandler : IQueryHandler<GetCategoryByIdQuery, CategoryDto?>
     {
         private readonly ShopContext _context;
         public GetCategoryByIdQueryHandler(ShopContext context)
@@ -17,7 +17,7 @@ namespace EShop.Query.CategoryAgg.GetById
         }
         public async Task<CategoryDto?> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            var model = await _context.Categories.FirstOrDefaultAsync(c => c.Id == request.CategoryId);
+            var model = await _context.Categories.FirstOrDefaultAsync(c => c.Id == request.CategoryId,cancellationToken);
             return model.Map();
 
         }
