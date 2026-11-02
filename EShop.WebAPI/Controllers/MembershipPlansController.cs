@@ -26,7 +26,7 @@ namespace EShop.WebAPI.Controllers
             _membershipPlanFacade = membershipPlanFacade;
         }
 
-        [HttpPut("discount/{planId:guid}")]
+        [HttpPut("{planId:guid}/discount")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -40,7 +40,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPut("price/{planId:guid}")]
+        [HttpPut("{planId:guid}/price")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -88,8 +88,8 @@ namespace EShop.WebAPI.Controllers
 
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(CustomerFilterParams), StatusCodes.Status200OK)]
-        public async Task<ActionResult<MembershipPlanFilterParam>> GetAllForAdmin(
+        [ProducesResponseType(typeof(MembershipPlanFilterResult), StatusCodes.Status200OK)]
+        public async Task<ActionResult<MembershipPlanFilterResult>> GetAllForAdmin(
             [FromQuery] MembershipPlanFilterParam filterParams)
         {
             var result = await _membershipPlanFacade.GetAllForAdmin(filterParams);

@@ -50,8 +50,9 @@ namespace EShop.WebAPI.Controllers
 
         [HttpDelete("items")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ClearCart(ClearCartCommand command)
+        public async Task<IActionResult> ClearCart()
         {
+            var command = new ClearCartCommand();
             var result = await _cartFacade.Clear(command);
             return Ok(result);
         }
@@ -59,14 +60,15 @@ namespace EShop.WebAPI.Controllers
         [HttpPost("merge")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> MegeGuestCart(MergeGuestCartCommand command)
+        public async Task<IActionResult> MegeGuestCart()
         {
+            var command = new MergeGuestCartCommand();
             var result = await _cartFacade.MergeGuestCart(command);
             return Ok(result);
         }
 
 
-        [HttpGet("cart")]
+        [HttpGet("current")]
         [Authorize]
         [ProducesResponseType(typeof(CartDto),StatusCodes.Status200OK)]
         public async Task<ActionResult<CartDto?>> GetCurrent()

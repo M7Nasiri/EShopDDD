@@ -35,7 +35,6 @@ namespace EShop.WebAPI.Controllers
         }
 
         [HttpPut("{paymentId:guid}/process")]
-        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PaymentCallbackResult>> Process(
@@ -49,7 +48,7 @@ namespace EShop.WebAPI.Controllers
         }
 
         [HttpPut("{paymentId:guid}/refund")]
-        [Authorize]
+        [Authorize(Roles="Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PaymentCallbackResult>> Refund(
@@ -90,7 +89,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{orderId:guid}")]
+        [HttpGet("orders /{orderId:guid}/status")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(OrderPaymentStatusDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<OrderPaymentStatusDto?>> GetStatusOfOrder(Guid orderId)

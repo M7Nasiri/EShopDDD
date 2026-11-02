@@ -1,32 +1,52 @@
+using _02.Application;
+using EShop.Infrastructure;
 using EShop.Infrastructure.Identity;
 using EShop.Infrastructure.Identity.Options;
 using EShop.Infrastructure.Identity.Seed;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using EShop.Infrastructure;
-using System.Text;
-using _02.Application;
 using EShop.Query;
 using EShop.Shared.Application;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Shop.Config;
+using System.Security.Claims;
+using System.Text;
+using EShop.Facade;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "توکن JWT خود را وارد کنید"
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecuritySchemeReference("Bearer", document),
+            new List<string>()
+        }
+    });
+});
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddIdentityInfrastructure(builder.Configuration);
 builder.Services.Init();
 builder.Services.InitConfig();
+builder.Services.InitFacade();
 builder.Services.RegisterApplicationDependency();
 builder.Services.RegistrationQueryServices();
 var jwtOptions = builder.Configuration
@@ -88,6 +108,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

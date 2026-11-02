@@ -85,7 +85,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{trackingCode}")]
+        [HttpGet("{trackingCode}/track")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(typeof(TrackingShipmentResultDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

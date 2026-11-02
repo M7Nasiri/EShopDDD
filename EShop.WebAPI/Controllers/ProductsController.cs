@@ -30,8 +30,9 @@ namespace EShop.WebAPI.Controllers
             _productFacade = productFacade;
         }
 
-        [HttpPost]
-        [Authorize(Roles="Admin")]
+        [HttpPost("images")] // POST /api/products/{productId}/images
+        [Authorize(Roles = "Admin")]
+        [Consumes("multipart/form-data")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddImage([FromForm] AddProductImageCommand command)
@@ -82,7 +83,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("{productId:guid}")]
+        [HttpDelete("{productId}/images/{imageId}")]
         [Authorize(Roles = "Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(Guid productId,
@@ -128,7 +129,6 @@ namespace EShop.WebAPI.Controllers
         }
 
         [HttpGet("customerFilter")]
-        [Authorize]
         [ProducesResponseType(typeof(ShopProductFilterResult), StatusCodes.Status200OK)]
         public async Task<ActionResult<ShopProductFilterResult>> GetAllForCustomer(
             [FromQuery] ShopProductFilterParams filterParams)

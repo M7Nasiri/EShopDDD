@@ -26,7 +26,7 @@ namespace EShop.WebAPI.Controllers
             _customerFacade = customerFacade;
         }
 
-        [HttpPost]
+        [HttpPost("address")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -73,7 +73,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegisterCustomerCommand command)
@@ -82,7 +82,7 @@ namespace EShop.WebAPI.Controllers
             return StatusCode(StatusCodes.Status201Created, result);
         }
 
-        [HttpPut]
+        [HttpPut("profile")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

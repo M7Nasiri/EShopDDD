@@ -6,14 +6,20 @@ using EShop.Shared.Query;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using EShop.Shared.Application.Interfaces.Authentication;
+using EShop.Shared.Domain.Exceptions;
 
 namespace EShop.Query.PaymentAgg.GetCustomerPayments
 {
-    public class GetCustomerPaymentsQueryHandler(DapperContext context) : 
+    public class GetCustomerPaymentsQueryHandler(DapperContext context, ICurrentUser currentUser) : 
         IQueryHandler<GetCustomerPaymentsQuery,CustomerPaymentFilterResult>
     {
+        private readonly ICurrentUser _currentUser = currentUser;
         public async Task<CustomerPaymentFilterResult> Handle(GetCustomerPaymentsQuery request, CancellationToken cancellationToken)
         {
+            if (_currentUser.UserId.Value != request.CustomerId)
+                throw new EShopException("Permission Denied");
+
             using var connection = context.CreateConnection();
 
             var parameters = new DynamicParameters();

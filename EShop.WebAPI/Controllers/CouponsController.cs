@@ -24,21 +24,22 @@ namespace EShop.WebAPI.Controllers
         {
             _copounFacade = copounFacade;
         }
-        [HttpPost("coupons")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateCart([FromBody] AddCouponCommand command)
+        public async Task<IActionResult> Create([FromBody] AddCouponCommand command)
         {
             var result = await _copounFacade.Add(command);
             return Ok(result);
         }
 
-        [HttpDelete("coupons")]
+        [HttpDelete("{couponId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ClearCart(DeleteCouponCommand command)
+        public async Task<IActionResult> Remove(Guid couponId)
         {
+            var command = new DeleteCouponCommand(couponId);
             var result = await _copounFacade.Delete(command);
             return Ok(result);
         }
@@ -84,8 +85,8 @@ namespace EShop.WebAPI.Controllers
         }
         [HttpGet("validate/{code}")]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(CouponFilterResult), StatusCodes.Status200OK)]
-        public async Task<ActionResult<CouponFilterResult>> Validate(string code)
+        [ProducesResponseType(typeof(ValidateCouponDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ValidateCouponDto>> Validate(string code)
         {
             var result = await _copounFacade.Validate(code);
             return Ok(result);

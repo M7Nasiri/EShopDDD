@@ -21,6 +21,7 @@ namespace _02.Application.ProductAgg.Commands.RemoveImage
             var product = await _repository.GetTracking(request.ProductId ,cancellationToken);
             if (product == null)
                 return OperationResult.NotFound();
+            //ToDo
 
             var imageName = product.RemoveImage(request.ImageId);
             await _repository.Save();

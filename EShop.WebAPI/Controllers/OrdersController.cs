@@ -17,6 +17,7 @@ using EShop.Query.OrderAgg.DTOs;
 using EShop.Query.OrderAgg.DTOs.GetActiveDraftOrder;
 using EShop.Query.OrderAgg.DTOs.GetAdminOrderDetails;
 using EShop.Query.OrderAgg.DTOs.GetCustomerOrderDetails;
+using EShop.Shared.Application.Interfaces.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +29,12 @@ namespace EShop.WebAPI.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrderFacade _orderFacade;
+        private readonly ICurrentUser currentUser;
 
-        public OrdersController(IOrderFacade orderFacade)
+        public OrdersController(IOrderFacade orderFacade, ICurrentUser currentUser)
         {
             _orderFacade = orderFacade;
+            this.currentUser = currentUser;
         }
 
         [HttpPost]
@@ -100,7 +103,7 @@ namespace EShop.WebAPI.Controllers
         }
 
         [HttpPut("ship")]
-        [Authorize]
+        [Authorize(Roles="Admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Ship()
@@ -111,7 +114,7 @@ namespace EShop.WebAPI.Controllers
 
             return Ok(result);
         }
-        [HttpPut("{orderId:Guid}/paid")]
+        [HttpPut("{orderId:guid}/paid")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -137,7 +140,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPut("removeItem/{productId:Guid}")]
+        [HttpPut("removeItem/{productId:guid}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -201,12 +204,13 @@ namespace EShop.WebAPI.Controllers
         }
 
         [HttpGet("customer/{orderId:guid}")]
-        [Authorize(Roles="Admin")]
+        [Authorize]
         [ProducesResponseType(typeof(CustomerOrderDetailDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomerOrderDetailDto?>> GetById(Guid orderId, GetDetailOfOrderDto dto)
+        public async Task<ActionResult<CustomerOrderDetailDto?>> GetById(Guid orderId)
         {
-            var result = await _orderFacade.GetDetailOfOrderForCustomer(orderId,dto.CusotmerId);
+            var result = await _orderFacade.GetDetailOfOrderForCustomer(orderId,
+                currentUser.UserId.Value);
             if (result is null)
                 return NotFound();
             return Ok(result);
@@ -236,5 +240,4 @@ namespace EShop.WebAPI.Controllers
 
     public record ChangeOrderItemQuantityDto(int NewQuantity);
     public record SaveShippingAddressDto(decimal Cost);
-    public record GetDetailOfOrderDto(Guid CusotmerId);
 }

@@ -24,16 +24,16 @@ namespace EShop.WebAPI.Controllers
             _membershipFacade = membershipFacade;
         }
 
-        [HttpPut("{membershipId:guid}/cancell")]
+        [HttpPut("{membershipId:guid}/cancel")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Cancell(Guid membershipId)
+        public async Task<IActionResult> Cancel(Guid membershipId)
         {
             var result = await _membershipFacade.Cancell(new CancellMembershipCommand(membershipId));
             return Ok(result);
         }
 
-        [HttpPut("{membershipId:guid}/expire")]
+        [HttpPut("expire")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Expire()
@@ -90,8 +90,8 @@ namespace EShop.WebAPI.Controllers
 
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(CustomerFilterParams), StatusCodes.Status200OK)]
-        public async Task<ActionResult<CustomerFilterParams>> GetAllForAdmin(
+        [ProducesResponseType(typeof(MembershipFilterResult), StatusCodes.Status200OK)]
+        public async Task<ActionResult<MembershipFilterResult>> GetAllForAdmin(
             [FromQuery] MembershipFilterParam filterParams)
         {
             var result = await _membershipFacade.GetForAdmin(filterParams);

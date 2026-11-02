@@ -61,7 +61,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{categoryId}")]
+        [HttpGet("{categoryId:guid}")]
         [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<CategoryDto?>> GetById(Guid categoryId)
@@ -91,7 +91,7 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{parentId:guid?}/children")]
+        [HttpGet("children/{parentId:guid?}")]
         [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<List<CategoryDto>>> GetChildren(Guid parentId)
         {
