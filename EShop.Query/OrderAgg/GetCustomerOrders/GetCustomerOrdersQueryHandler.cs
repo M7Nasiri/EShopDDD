@@ -6,16 +6,18 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using EShop.Shared.Application.Interfaces.Authentication;
 
 namespace EShop.Query.OrderAgg.GetCustomerOrders
 {
-    public class GetCustomerOrdersQueryHandler(DapperContext dapperContext) : IQueryHandler<GetCustomerOrdersQuery, CustomerOrdersFilterResult>
+    public class GetCustomerOrdersQueryHandler(DapperContext dapperContext, ICurrentUser currentUser) : IQueryHandler<GetCustomerOrdersQuery, CustomerOrdersFilterResult>
     {
+        private readonly ICurrentUser _currentUser = currentUser;
         public async Task<CustomerOrdersFilterResult> Handle(GetCustomerOrdersQuery request, CancellationToken cancellationToken)
         {
             var filter = request.FilterParams;
             var dynamicParams = new DynamicParameters();
-            dynamicParams.Add("CustomerId", filter.CustomerId);
+            dynamicParams.Add("CustomerId",currentUser.UserId.Value);
 
             var condition = "WHERE o.CustomerId = @CustomerId AND o.IsDelete = 0";
 

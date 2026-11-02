@@ -8,7 +8,7 @@ namespace EShop.Query.OrderAgg.DTOs
 {
     public class CustomerOrdersFilterParams : BaseFilterParam
     {
-        public Guid CustomerId { get; set; }
+        //public Guid CustomerId { get; set; }
         public string? Search { get; set; }
         public OrderStatus? OrderStatus { get; set; } 
     }

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace _02.Application.MembershipPlagAgg.Commands.ChangeMembershipPlanDiscount
 {
-    public class ChangeMembershipPlanPriceCommandHandler : IBaseCommandHandler<ChangeMembershipPlanPriceCommand>
+    public class ChangeMembershipPlanPriceCommandHandler : IBaseCommandHandler<ChangeMembershipPlanDiscountCommand>
     {
         private readonly IMembershipPlanRepository _membershipPlanRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -21,7 +21,7 @@ namespace _02.Application.MembershipPlagAgg.Commands.ChangeMembershipPlanDiscoun
             _membershipPlanRepository = membershipPlanRepository;
         }
 
-        public async Task<OperationResult> Handle(ChangeMembershipPlanPriceCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult> Handle(ChangeMembershipPlanDiscountCommand request, CancellationToken cancellationToken)
         {
             var plan = await _membershipPlanRepository.GetTracking(request.PlanId, cancellationToken);
             if (plan == null)

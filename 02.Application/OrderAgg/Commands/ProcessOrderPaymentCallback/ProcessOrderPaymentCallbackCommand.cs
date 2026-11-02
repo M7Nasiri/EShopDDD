@@ -5,5 +5,6 @@ using System.Text;
 
 namespace _02.Application.OrderAgg.Commands.ProcessOrderPaymentCallback
 {
-    public sealed record ProcessOrderPaymentCallbackCommand(Guid OrderId,string TrackingNumber) : IBaseCommand;
+    //Change Remove Tracking number
+    public sealed record ProcessOrderPaymentCallbackCommand(Guid OrderId) : IBaseCommand;
 }

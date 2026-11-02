@@ -5,5 +5,5 @@ using System.Text;
 
 namespace _02.Application.MembershipPlagAgg.Commands.ChangeMembershipPlanDiscount
 {
-    public sealed record ChangeMembershipPlanPriceCommand(Guid PlanId,int NewDiscountPercent) : IBaseCommand;
+    public sealed record ChangeMembershipPlanDiscountCommand(Guid PlanId,int NewDiscountPercent) : IBaseCommand;
 }

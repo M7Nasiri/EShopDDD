@@ -8,6 +8,7 @@ using System.Text;
 using _01.Domain.Exceptions;
 using Dapper;
 using EShop.Infrastructure.Persistent.Dapper;
+using EShop.Shared.Application.Interfaces.Authentication;
 using EShop.Shared.Query;
 
 namespace EShop.Query.OrderAgg.GetCustomerOrderDetails
