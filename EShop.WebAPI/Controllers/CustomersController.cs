@@ -106,8 +106,8 @@ namespace EShop.WebAPI.Controllers
 
         [HttpGet("admin")]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(CustomerFilterParams), StatusCodes.Status200OK)]
-        public async Task<ActionResult<CustomerFilterParams>> GetAllForAdmin(
+        [ProducesResponseType(typeof(CustomerFilterResult), StatusCodes.Status200OK)]
+        public async Task<ActionResult<CustomerFilterResult>> GetAllForAdmin(
             [FromQuery] CustomerFilterParams filterParams)
         {
             var result = await _customerFacade.GetCustomerLookupForAdmin(filterParams);
