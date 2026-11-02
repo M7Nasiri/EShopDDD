@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using _02.Application.CouponAgg.Commands.EnableCoupon;
 
 namespace _02.Application.CouponAgg.Commands.DisableCoupon
 {
