@@ -26,7 +26,6 @@ namespace _02.Application.ShipmentAgg.Commands.ReturnShipment
             if (shipment is null)
                 throw new EShopDomainException("مرسوله مورد نظر یافت نشد.");
 
-            // بیزینس لاجیک داخل دامین: وضعیت را به Returned تغییر می‌دهد
             shipment.Return();
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
