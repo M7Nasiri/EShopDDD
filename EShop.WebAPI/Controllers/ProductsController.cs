@@ -6,6 +6,7 @@ using _02.Application.ProductAgg.Commands.ChangePrice;
 using _02.Application.ProductAgg.Commands.CreateProduct;
 using _02.Application.ProductAgg.Commands.IncreaseStock;
 using _02.Application.ProductAgg.Commands.RemoveImage;
+using _02.Application.ProductAgg.Commands.RemoveProduct;
 using EShop.Facade.Product;
 using EShop.Query.CommentAgg.DTOs.Product;
 using EShop.Query.CustomerAgg.DTOs;
@@ -13,6 +14,7 @@ using EShop.Query.ProductAgg.DTOs;
 using EShop.Query.ProductAgg.DTOs.Admin;
 using EShop.Query.ProductAgg.DTOs.Customer;
 using EShop.Query.ProductAgg.DTOs.Details;
+using EShop.Shared.Application;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +32,14 @@ namespace EShop.WebAPI.Controllers
             _productFacade = productFacade;
         }
 
-        [HttpPost("images")] // POST /api/products/{productId}/images
+        [HttpPost("{productId:guid}/images")] // POST /api/products/{productId}/images
         [Authorize(Roles = "Admin")]
         [Consumes("multipart/form-data")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddImage([FromForm] AddProductImageCommand command)
+        public async Task<IActionResult> AddImage([FromRoute]Guid productId,[FromForm] AddProductImageRequestDto dto)
         {
+            var command = new AddProductImageCommand(productId, dto.ImageFile, dto.Sequence);
             var result = await _productFacade.AddImage(command);
 
             return StatusCode(StatusCodes.Status201Created, result);
@@ -85,13 +88,19 @@ namespace EShop.WebAPI.Controllers
 
         [HttpDelete("{productId}/images/{imageId}")]
         [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Delete(Guid productId,
-            [FromQuery] DeleteImageProductRequestDto dto)
+            Guid imageId)
         {
-            var result = await _productFacade.RemoveImage(
-                new RemoveProductImageCommand(productId,dto.ImageId));
-            return Ok(result);
+            var result = await _productFacade.RemoveProduct(new RemoveProductCommand(productId));
+            if (result.Status == OperationResultStatus.Success)
+            {
+                await _productFacade.RemoveImage(
+                    new RemoveProductImageCommand(productId, imageId));
+                return NoContent();
+            }
+            return BadRequest();
+            
         }
 
         [HttpGet("{productId:guid}/stock")]
@@ -144,4 +153,6 @@ namespace EShop.WebAPI.Controllers
     public record IncreaseStockRequestDto(int Quantity);
     public record DeleteImageProductRequestDto(Guid ImageId);
     public record CheckStockRequestDto(int RequiredCount);
+
+    public record AddProductImageRequestDto(IFormFile ImageFile, int Sequence);
 }

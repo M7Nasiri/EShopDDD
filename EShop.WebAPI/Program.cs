@@ -101,8 +101,31 @@ builder.Services
                 RoleClaimType = ClaimTypes.Role
             };
     });
-
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 builder.Services.AddAuthorization();
+
+
+const string corsPolicyName = "AllowFrontend";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicyName, policy =>
+    {
+      
+        //policy.WithOrigins("http://localhost:3000", "http://127.0.0.1:5500") 
+        //    .AllowAnyHeader()
+        //    .AllowAnyMethod()
+        //    .AllowCredentials(); 
+
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
+
 
 var app = builder.Build();
 
@@ -114,11 +137,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(corsPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-await IdentityDataSeeder.SeedRolesAsync(
-    app.Services);
+await IdentityDataSeeder.SeedRolesAsync(app.Services);
+await IdentityDataSeeder.SeedAdminAsync(app.Services, app.Configuration);
 app.Run();
 

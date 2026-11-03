@@ -49,18 +49,17 @@ namespace EShop.WebAPI.Controllers
 
 
         [HttpDelete("items")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> ClearCart()
         {
-            var command = new ClearCartCommand();
-            var result = await _cartFacade.Clear(command);
-            return Ok(result);
+            var result = await _cartFacade.Clear(new ClearCartCommand());
+            return NoContent();
         }
 
         [HttpPost("merge")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> MegeGuestCart()
+        public async Task<IActionResult> MergeGuestCart()
         {
             var command = new MergeGuestCartCommand();
             var result = await _cartFacade.MergeGuestCart(command);

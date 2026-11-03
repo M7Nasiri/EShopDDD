@@ -26,5 +26,6 @@ namespace EShop.Shared.Domain.Repository
         bool Exists(Expression<Func<T, bool>> expression);
 
         T? Get(Guid id);
+        Task<int> RemoveAsync(Guid id, CancellationToken token = default);
     }
 }

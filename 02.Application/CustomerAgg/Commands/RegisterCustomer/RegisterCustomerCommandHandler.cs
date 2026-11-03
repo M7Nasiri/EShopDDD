@@ -28,19 +28,20 @@ namespace _02.Application.CustomerAgg.Commands.RegisterCustomer
 
             var email = new Email(
                 request.Email);
+            var id = request.UserId;
             try
             {
-                createdUserId =
-                    await identityService.RegisterCustomerAsync(
-                        userName: request.UserName,
-                        email: email.Value,
-                        phoneNumber: phoneNumber.Value,
-                        password: request.Password,
-                        firstName: request.Name,
-                        lastName: request.Family);
+                //createdUserId =
+                //    await identityService.RegisterCustomerAsync(
+                //        userName: request.UserName,
+                //        email: email.Value,
+                //        phoneNumber: phoneNumber.Value,
+                //        password: request.Password,
+                //        firstName: request.Name,
+                //        lastName: request.Family);
 
                 var customer = new Customer(
-                    id: createdUserId.Value,
+                    id: id,
                     fullName: fullName,
                     phoneNumber: phoneNumber,
                     email: email);
@@ -56,27 +57,27 @@ namespace _02.Application.CustomerAgg.Commands.RegisterCustomer
             }
             catch (Exception originalException)
             {
-                if (createdUserId.HasValue)
-                {
-                    try
-                    {
-                        await identityService.DeleteUserAsync(
-                            createdUserId.Value);
-                        logger.LogWarning(
-                            originalException,
-                            $"ثبت بیزینسی مشتری با خطا مواجه شد. کاربر Identity با شناسه {createdUserId} با موفقیت به‌صورت جبرانی حذف شد.",
-                            createdUserId.Value);
+                //if (createdUserId.HasValue)
+                //{
+                //    try
+                //    {
+                //        await identityService.DeleteUserAsync(
+                //            createdUserId.Value);
+                //        logger.LogWarning(
+                //            originalException,
+                //            $"ثبت بیزینسی مشتری با خطا مواجه شد. کاربر Identity با شناسه {createdUserId} با موفقیت به‌صورت جبرانی حذف شد.",
+                //            createdUserId.Value);
 
-                    }
-                    catch (Exception compensationException)
-                    {
-                        logger.LogCritical(
-                            compensationException,
-                            "خطای بحرانی در فرآیند جبرانی! کاربر در IdentityDb با شناسه {createdUserId} ایجاد شد اما در دیتابیس اصلی ذخیره نشد و حذف جبرانی نیز با شکست روبرو گردید. خطای اصلی: {OriginalError}",
-                            createdUserId.Value,
-                            originalException.Message);
-                    }
-                }
+                //    }
+                //    catch (Exception compensationException)
+                //    {
+                //        logger.LogCritical(
+                //            compensationException,
+                //            "خطای بحرانی در فرآیند جبرانی! کاربر در IdentityDb با شناسه {createdUserId} ایجاد شد اما در دیتابیس اصلی ذخیره نشد و حذف جبرانی نیز با شکست روبرو گردید. خطای اصلی: {OriginalError}",
+                //            createdUserId.Value,
+                //            originalException.Message);
+                //    }
+                //}
 
                 throw;
             }

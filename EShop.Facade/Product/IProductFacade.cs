@@ -12,6 +12,7 @@ using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using _02.Application.ProductAgg.Commands.RemoveProduct;
 using EShop.Query.ProductAgg.CheckProductStock;
 using EShop.Query.ProductAgg.GetProductDetailsById;
 using EShop.Query.ProductAgg.GetProductForAdmin;
@@ -29,6 +30,7 @@ namespace EShop.Facade.Product
         Task<OperationResult> Add(CreateProductCommand command);
         Task<OperationResult> IncreaseStock(IncreaseStockCommand command);
         Task<OperationResult> RemoveImage(RemoveProductImageCommand command);
+        Task<OperationResult> RemoveProduct(RemoveProductCommand command);
 
         //Queries
         Task<ProductStockDto?> CheckStock(Guid productId, int requiredCount = 1);
@@ -67,6 +69,11 @@ namespace EShop.Facade.Product
         }
 
         public async Task<OperationResult> RemoveImage(RemoveProductImageCommand command)
+        {
+            return await _mediator.Send(command);
+        }
+
+        public async Task<OperationResult> RemoveProduct(RemoveProductCommand command)
         {
             return await _mediator.Send(command);
         }

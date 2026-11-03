@@ -33,6 +33,8 @@ namespace _01.Domain.Entities.Aggregates.CustomerAgg
 
             Id = id;
             FullName = fullName;
+            Email = email;
+            PhoneNumber = phoneNumber;
         }
 
         public void ChangeFullName(Name name)

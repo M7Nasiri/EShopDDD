@@ -37,7 +37,7 @@ namespace EShop.Query.CartAgg.GetCurrent
             if (_currentUser.IsValid() && _currentUser.UserId.HasValue)
             {
                 whereClause = "c.CustomerId = @OwnerId AND c.Status = @ActiveStatus";
-                parameters = new { OwnerId = _currentUser.UserId.Value, ActiveStatus = 1 };
+                parameters = new { OwnerId = _currentUser.UserId.Value, ActiveStatus = 0 };
             }
             else
             {

@@ -1,5 +1,8 @@
-﻿using EShop.Shared.Application.Interfaces.Authentication;
+﻿using _02.Application.CustomerAgg.Commands.RegisterCustomer;
+using EShop.Facade.Customer;
+using EShop.Shared.Application.Interfaces.Authentication;
 using EShop.WebAPI.DTOs.Auth;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +18,15 @@ public sealed class AuthController : ControllerBase
 
     private readonly IIdentityService _identityService;
     private readonly ITokenService _tokenService;
+    private readonly ICustomerFacade _customerFacade;
 
     public AuthController(
         IIdentityService identityService,
-        ITokenService tokenService)
+        ITokenService tokenService, ICustomerFacade customerFacade)
     {
         _identityService = identityService;
         _tokenService = tokenService;
+        _customerFacade = customerFacade;
     }
 
     [AllowAnonymous]
@@ -36,6 +41,11 @@ public sealed class AuthController : ControllerBase
             request.Password,
             request.FirstName,
             request.LastName);
+
+        await _customerFacade.Register(new RegisterCustomerCommand(
+            userId,request.UserName, request.FirstName, request.LastName,
+            request.Email, request.PhoneNumber, request.Password));
+
 
         var tokens = await _tokenService.CreateTokensAsync(
             userId,
@@ -116,10 +126,17 @@ public sealed class AuthController : ControllerBase
             GetIpAddress(),
             HttpContext.RequestAborted);
 
-        return Ok(tokens);
+        SetRefreshTokenCookie(
+            tokens.RefreshToken,
+            tokens.RefreshTokenExpiresAtUtc);
+
+
+        return Ok(new AuthResponse(
+            tokens.AccessToken,
+            tokens.AccessTokenExpiresAtUtc));
     }
 
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
@@ -138,10 +155,18 @@ public sealed class AuthController : ControllerBase
 
         return NoContent();
     }
+    [AllowAnonymous]
+    [HttpGet("csrf")]
+    public IActionResult GetCsrfToken(
+        [FromServices] IAntiforgery antiforgery)
+    {
+        var tokens = antiforgery.GetAndStoreTokens(HttpContext);
+        return Ok(new { csrfToken = tokens.RequestToken });
+    }
 
     #region Helper Methods
 
- 
+
     private void SetRefreshTokenCookie(string refreshToken, DateTimeOffset expiresAtUtc)
     {
         var cookieOptions = new CookieOptions
@@ -169,15 +194,15 @@ public sealed class AuthController : ControllerBase
         });
     }
 
-    private string? GetIpAddress()
-    {
-        if (Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
-        {
-            return forwardedFor.FirstOrDefault()?.Split(',').FirstOrDefault()?.Trim();
-        }
+    private string? GetIpAddress()=> HttpContext.Connection.RemoteIpAddress?.ToString();
+    //{
+    //    //if (Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+    //    //{
+    //    //    return forwardedFor.FirstOrDefault()?.Split(',').FirstOrDefault()?.Trim();
+    //    //}
 
-        return HttpContext.Connection.RemoteIpAddress?.ToString();
-    }
+    //    return HttpContext.Connection.RemoteIpAddress?.ToString();
+    //}
 
     #endregion
 }

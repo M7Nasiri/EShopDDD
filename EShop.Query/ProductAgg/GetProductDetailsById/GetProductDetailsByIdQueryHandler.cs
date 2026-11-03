@@ -21,7 +21,7 @@ internal class GetProductDetailsByIdQueryHandler(DapperContext dapperContext)
                 p.UnitPrice, 
                 p.Stock, 
                 p.CategoryId, 
-                p.ImageName AS MainImageو
+                p.ImageName AS MainImage,
                 ca.Name As CategoryName
             FROM Products p
             Left Join Categories ca

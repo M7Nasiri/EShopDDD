@@ -114,18 +114,18 @@ namespace EShop.WebAPI.Controllers
 
             return Ok(result);
         }
-        [HttpPut("{orderId:guid}/paid")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Paid(Guid orderId)
-        {
+        //[HttpPut("{orderId:guid}/paid")]
+        //[Authorize]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> Paid(Guid orderId)
+        //{
 
-            var command = new ProcessOrderPaymentCallbackCommand(orderId);
-            var result = await _orderFacade.ProcessPaymentCallback(command);
+        //    var command = new ProcessOrderPaymentCallbackCommand(orderId);
+        //    var result = await _orderFacade.ProcessPaymentCallback(command);
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         [HttpPut("removeCoupon")]
         [Authorize]

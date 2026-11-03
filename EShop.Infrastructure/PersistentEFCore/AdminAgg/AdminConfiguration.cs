@@ -20,6 +20,25 @@ namespace EShop.Infrastructure.PersistentEFCore.AdminAgg
             .HasColumnName("FullName")
             .HasMaxLength(200)
             .IsRequired();
+
+
+            builder.Property(c => c.Email)
+                .HasConversion(
+                    email => email.Value,
+                    value => new Email(value))
+                .HasColumnName("Email")
+                .HasMaxLength(256)
+                .IsRequired();
+
+
+            builder.Property(c => c.PhoneNumber)
+                .HasConversion(
+                    phoneNumber => phoneNumber.Value,
+                    value => new PhoneNumber(value))
+                .HasColumnName("PhoneNumber")
+                .HasMaxLength(20)
+                .IsRequired();
+
         }
     }
 }

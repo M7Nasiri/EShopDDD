@@ -6,17 +6,19 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using EShop.Shared.Application.Exceptions;
+using MediatR;
 
 namespace EShop.Infrastructure.Identity.Services
 {
     public sealed class IdentityService : IIdentityService
     {
         private readonly UserManager<AppUser> _userManager;
-
+        private readonly IMediator _mediator;
         public IdentityService(
-            UserManager<AppUser> userManager)
+            UserManager<AppUser> userManager, IMediator mediator)
         {
             _userManager = userManager;
+            _mediator = mediator;
         }
 
         public async Task<Guid> RegisterCustomerAsync(

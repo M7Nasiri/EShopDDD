@@ -69,9 +69,13 @@ namespace EShop.WebAPI.Controllers
 
         [HttpGet("coupon/{code}")]
         [ProducesResponseType(typeof(CouponDetailsDto), StatusCodes.Status200OK)]
+        [ProducesResponseType( StatusCodes.Status404NotFound)]
+
         public async Task<ActionResult<CouponDetailsDto?>> GetByCode(string code)
         {
             var result = await _copounFacade.GetByCode(code);
+            if(result is null)
+                return NotFound();
             return Ok(result);
         }
 

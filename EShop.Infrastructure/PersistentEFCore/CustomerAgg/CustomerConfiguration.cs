@@ -71,6 +71,7 @@ namespace EShop.Infrastructure.PersistentEFCore.CustomerAgg
                     .HasColumnName("PhoneNumber")
                     .HasMaxLength(20)
                     .IsRequired();
+
                 a.Property(x => x.Title).HasMaxLength(100).IsRequired();
                 a.Property(x => x.Province).HasMaxLength(100).IsRequired();
                 a.Property(x => x.City).HasMaxLength(100).IsRequired();

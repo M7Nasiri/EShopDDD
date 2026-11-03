@@ -73,14 +73,14 @@ namespace EShop.WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("register")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register([FromBody] RegisterCustomerCommand command)
-        {
-            var result = await _customerFacade.Register(command);
-            return StatusCode(StatusCodes.Status201Created, result);
-        }
+        //[HttpPost("register")]
+        //[ProducesResponseType(StatusCodes.Status201Created)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<IActionResult> Register([FromBody] RegisterCustomerCommand command)
+        //{
+        //    var result = await _customerFacade.Register(command);
+        //    return StatusCode(StatusCodes.Status201Created, result);
+        //}
 
         [HttpPut("profile")]
         [Authorize]

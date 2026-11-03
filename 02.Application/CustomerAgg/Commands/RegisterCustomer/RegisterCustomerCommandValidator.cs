@@ -14,11 +14,11 @@ namespace _02.Application.CustomerAgg.Commands.RegisterCustomer
             .MaximumLength(100).WithMessage("Max 100 Chars.");
 
             RuleFor(x => x.Name)
-            .MinimumLength(5).WithMessage("Min 5 Chars.")
+            .MinimumLength(2).WithMessage("Min 2 Chars.")
             .MaximumLength(100).WithMessage("Max 100 Chars.");
 
             RuleFor(x => x.Family)
-            .MinimumLength(5).WithMessage("Min 5 Chars.")
+            .MinimumLength(2).WithMessage("Min 2Chars.")
             .MaximumLength(100).WithMessage("Max 100 Chars.");
 
 
